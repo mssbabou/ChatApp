@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  ChatApp:
+    image: chatapp
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+      - "80:80"
+    depends_on:
+      - ChatAppMongoDB
+
+  ChatAppMongoDB:
+    image: mongo
+    ports:
+      - "27017:27017"
