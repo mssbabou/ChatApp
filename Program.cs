@@ -1,7 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the DI container.
-// IMPORTANT: This must be done before calling builder.Build()
+builder.Services.AddScoped<MongoDbContext>();
+builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -20,10 +21,5 @@ app.UseRouting();
 
 // Map the SignalR Hub
 app.MapHub<ChatHub>("/chathub");
-
-MongoDbContext dbContext = new MongoDbContext(builder.Configuration);
-ChatDatabaseService chatDatabaseService = new ChatDatabaseService(dbContext);
-await chatDatabaseService.AddMessageAsync(new ChatMessage("user", $"message"));
-List<ChatMessage> messages = await chatDatabaseService.GetLastMessages(0, 10);
 
 app.Run();
