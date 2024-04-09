@@ -3,7 +3,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the DI container.
 // IMPORTANT: This must be done before calling builder.Build()
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<MongoDbContext>();
 
 var app = builder.Build();
 
@@ -22,22 +21,9 @@ app.UseRouting();
 // Map the SignalR Hub
 app.MapHub<ChatHub>("/chathub");
 
-_ = Task.Run(() =>
-{
-    using var scope = app.Services.CreateScope();
-    try
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<MongoDbContext>();
-        var client = dbContext.Database.Client;
-        client.ListDatabaseNames(); // This will throw an exception if unable to connect
-        Console.WriteLine("Successfully connected to MongoDB.");
-    }
-    catch (Exception)
-    {
-        Console.WriteLine($"Could not connect to MongoDB");
-        // Consider logging the exception and handling it appropriately
-        // You might want to stop application startup if this is a critical issue
-    }
-});
+MongoDbContext dbContext = new MongoDbContext(builder.Configuration);
+ChatDatabaseService chatDatabaseService = new ChatDatabaseService(dbContext);
+await chatDatabaseService.AddMessageAsync(new ChatMessage("user", $"message"));
+List<ChatMessage> messages = await chatDatabaseService.GetLastMessages(0, 10);
 
 app.Run();

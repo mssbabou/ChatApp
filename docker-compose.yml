@@ -1,11 +1,9 @@
-version: '3.4'
+version: '3.8'
 
 services:
   ChatApp:
     image: chatapp
-    build:
-      context: .
-      dockerfile: dockerfile
+    build: .
     ports:
       - "8080:8080"
       - "80:80"
@@ -14,5 +12,10 @@ services:
 
   ChatAppMongoDB:
     image: mongo
+    volumes:
+      - mongodb_data:/data/db
     ports:
       - "27017:27017"
+
+volumes:
+  mongodb_data:
