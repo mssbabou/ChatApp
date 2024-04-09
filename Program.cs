@@ -22,7 +22,7 @@ app.UseRouting();
 // Map the SignalR Hub
 app.MapHub<ChatHub>("/chathub");
 
-Task.Run(() =>
+_ = Task.Run(() =>
 {
     using var scope = app.Services.CreateScope();
     try
