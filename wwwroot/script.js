@@ -11,6 +11,13 @@ document.getElementById("send-button").onclick = function() {
 };
 
 connection.on("ReceiveMessage", function (user, message) {
+
+    var newMessage = document.createElement("div");
+    newMessage.className = user == connection.connectionId ? "message sent" : "message recieved";
+    newMessage.textContent = message;
+
+    document.getElementById("message-list").appendChild(newMessage);
+
     console.log(user + ": " + message);
 });
 

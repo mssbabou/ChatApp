@@ -20,16 +20,31 @@ public class ChatDatabaseService
     #region Methods
     public async Task AddMessageAsync(ChatMessage message)
     {
-        await chatMessagesCollection.InsertOneAsync(message);
+        try
+        {
+            await chatMessagesCollection.InsertOneAsync(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public async Task<List<ChatMessage>> GetLastMessages(int start, int count) 
     {
-        return await chatMessagesCollection.Find(_ => true) // Find all documents
-            .SortByDescending(m => m.TimeStamp) // Sort by TimeStamp in descending order
-            .Skip(start) // Skip the first 'start' documents
-            .Limit(count) // Limit the number of documents returned to 'count'
-            .ToListAsync(); // Return the documents as a List
+        try
+        {
+            return await chatMessagesCollection.Find(_ => true) // Find all documents
+                .SortByDescending(m => m.TimeStamp) // Sort by TimeStamp in descending order
+                .Skip(start) // Skip the first 'start' documents
+                .Limit(count) // Limit the number of documents returned to 'count'
+                .ToListAsync(); // Return the documents as a List
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return new List<ChatMessage>();
+        }
     }
     #endregion
 }
