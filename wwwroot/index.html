@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>boxchat</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
 </head>
 <body>
-    <h1>hej</h1>
+    <div class="chat-container">
+        <div class="chat-box">
+            <div class="message recieved">
+                <div class="message-content">Modtaget besked</div>
+            </div>
+            <div class="message sent">
+                <div class="message-content">Jeg sendte en besked</div>
+            </div>
+            <div class="input-box">
+                <input type="text" placeholder="Type your message...">
+                <button>Send</button>
+            </div>
+        </div>
 </body>
 </html>
