@@ -6,7 +6,6 @@
     <title>boxchat</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
-    <script src="script.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -17,10 +16,12 @@
             <div class="message sent">
                 <div class="message-content">Jeg sendte en besked</div>
             </div>
-            <div class="input-box">
-                <input type="text" placeholder="Type your message...">
-                <button>Send</button>
+            <div class="input-box" id="input-box">
+                <input id="message-input" type="text" placeholder="Type your message...">
+                <button id="send-button">Send</button>
             </div>
         </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
