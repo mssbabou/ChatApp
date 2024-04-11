@@ -13,7 +13,7 @@ public class ChatHub : Hub
     {
         await Clients.All.SendAsync("ReceiveMessage", Context.ConnectionId, message);
 
-        _ = Task.Run(async () => await chatDatabaseService.AddMessageAsync(new ChatMessage(user, message)));
+        _ = Task.Run(async () => await chatDatabaseService.AddMessageAsync(new ChatMessage(Context.ConnectionId, message)));
     }
 
     public override async Task OnConnectedAsync()
