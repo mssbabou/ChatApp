@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>boxchat</title>
+    <title>Chatbox</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-box">
-
-            <div id="message-list">
-
-            </div>
-
-            <div class="input-box" id="input-box">
-                <input id="message-input" type="text" placeholder="Type your message...">
-                <button id="send-button">Send</button>
-            </div>
+            <div id="message-list"></div>
         </div>
-
+        <div class="input-box" id="input-box">
+            <input id="message-input" type="text" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
