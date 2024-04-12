@@ -32,7 +32,7 @@ _ = Task.Run(async () =>
 
         Console.WriteLine("Connected to MongoDB");
     }
-    catch (Exception ex)
+    catch (Exception)
     {
         Console.WriteLine("Failed to connect to MongoDB");
     }
