@@ -2,13 +2,14 @@ version: '3.8'
 
 services:
   ChatApp:
-    image: chatapp
-    build: .
-    ports:
-      - "8080:8080"
-      - "80:80"
     depends_on:
       - ChatAppMongoDB
+    build: .
+    image: chatapp
+    ports:
+      - "80:80"
+    networks:
+      - chat-app-network
 
   ChatAppMongoDB:
     image: mongo
@@ -16,6 +17,11 @@ services:
       - mongodb_data:/data/db
     ports:
       - "27017:27017"
+    networks:
+      - chat-app-network
 
 volumes:
   mongodb_data:
+
+networks:
+  chat-app-network: {}
