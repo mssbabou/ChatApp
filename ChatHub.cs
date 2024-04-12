@@ -11,13 +11,8 @@ public class ChatHub : Hub
 
     public async Task SendMessage(string user, string message)
     {
-        await Clients.All.SendAsync("ReceiveMessage", Context.ConnectionId, message);
-        await chatDatabaseService.TryAddMessageAsync(new ChatMessage(Context.ConnectionId, message));
-    }
-
-    public override async Task OnConnectedAsync()
-    {
-        await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
-        await base.OnConnectedAsync();
+        ChatMessage chatMessage = new ChatMessage(user, message);
+        await Clients.All.SendAsync("ReceiveMessage", chatMessage);
+        await chatDatabaseService.TryAddMessageAsync(chatMessage);
     }
 }
