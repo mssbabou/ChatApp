@@ -18,15 +18,17 @@ public class ChatDatabaseService
     #endregion
 
     #region Methods
-    public async Task AddMessageAsync(ChatMessage message)
+    public async Task<bool> TryAddMessageAsync(ChatMessage message)
     {
         try
         {
             await chatMessagesCollection.InsertOneAsync(message);
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            return false;
         }
     }
 
