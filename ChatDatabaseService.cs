@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 public class ChatDatabaseService
 {
@@ -18,54 +16,41 @@ public class ChatDatabaseService
     #endregion
 
     #region Methods
-    public async Task<bool> TryAddMessageAsync(ChatMessage message)
+    public async Task<ChatMessage> GetMessageAsync(string id)
+    {
+        var message = await chatMessagesCollection.Find(m => m.Id == id).FirstOrDefaultAsync();
+        if (message == null)
+        {
+            throw new Exception("Message not found");
+        }
+        return message;
+    }
+
+    public async Task<ChatMessage> AddMessageAsync(ChatMessage message)
     {
         try
         {
             await chatMessagesCollection.InsertOneAsync(message);
-            return true;
+            return message;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            return false;
+            throw new Exception("Failed to add message", ex);
         }
     }
 
-    public async Task<List<ChatMessage>> GetLastMessages(int start, int count) 
+    public async Task<List<ChatMessage>> GetLastMessagesAsync(int start, int count) 
     {
-        try
+        var messages = await chatMessagesCollection.Find(_ => true)
+            .SortByDescending(m => m.Id)
+            .Skip(start)
+            .Limit(count)
+            .ToListAsync();
+        if (messages == null || messages.Count == 0)
         {
-            return await chatMessagesCollection.Find(_ => true) // Find all documents
-                .SortByDescending(m => m.TimeStamp) // Sort by TimeStamp in descending order
-                .Skip(start) // Skip the first 'start' documents
-                .Limit(count) // Limit the number of documents returned to 'count'
-                .ToListAsync(); // Return the documents as a List
+            throw new Exception("No messages found");
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return new List<ChatMessage>();
-        }
+        return messages;
     }
     #endregion
 }
-
-public class ChatMessage
-{
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
-
-    public string User { get; set; }
-    public string Message { get; set; }
-    public DateTime TimeStamp { get; set; }
-
-    public ChatMessage(string user, string message)
-    {
-        User = user;
-        Message = message;
-        TimeStamp = DateTime.UtcNow;
-    }
-}
-

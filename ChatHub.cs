@@ -13,6 +13,6 @@ public class ChatHub : Hub
     {
         ChatMessage chatMessage = new ChatMessage(Context.ConnectionId, message);
         await Clients.All.SendAsync("ReceiveMessage", chatMessage);
-        await chatDatabaseService.TryAddMessageAsync(chatMessage);
+        await chatDatabaseService.AddMessageAsync(chatMessage);
     }
 }

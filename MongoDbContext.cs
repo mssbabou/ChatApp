@@ -16,4 +16,19 @@ public class MongoDbContext
     {
         return Database.GetCollection<T>(name);
     }
+
+    public async Task<bool> TestConnectionAsync()
+    {
+        try
+        {
+            await Database.ListCollectionNamesAsync();
+            Console.WriteLine("Connected to MongoDB");
+            return true;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Failed to connect to MongoDB");
+            return false;
+        }
+    }
 }
