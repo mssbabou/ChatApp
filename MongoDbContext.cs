@@ -17,6 +17,10 @@ public class MongoDbContext
         return Database.GetCollection<T>(name);
     }
 
+    /// <summary>
+    /// Test the connection to the MongoDB server
+    /// </summary>
+    /// <returns>True if the connection is successful, false otherwise</returns>
     public async Task<bool> TestConnectionAsync()
     {
         try
