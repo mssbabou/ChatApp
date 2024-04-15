@@ -1,6 +1,6 @@
 const connection = new signalR.HubConnectionBuilder()
-.withUrl("/chatHub")
-.build();
+    .withUrl("/chathub", { accessTokenFactory: () => '1234' })
+    .build();
 
 document.getElementById("send-button").onclick = function() {
     if (document.getElementById("message-input").value.trim() != "")
@@ -23,9 +23,6 @@ document.getElementById("message-input").addEventListener("keypress",function(ev
         document.getElementById("message-input").value = "";
     }
 });
-
-
-
 
 connection.on("ReceiveMessage", function (chatMessage) {
 

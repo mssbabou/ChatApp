@@ -16,6 +16,6 @@ public class User
         Username = username;
 
         UserId = Guid.NewGuid().ToString();
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api")]
@@ -38,6 +39,7 @@ public class ChatRestApi : Controller
         }
     }
 
+    [Authorize]
     [HttpPost("AddMessage")]
     public async Task<IActionResult> AddMessage([FromBody] ChatMessage message)
     {
@@ -50,6 +52,22 @@ public class ChatRestApi : Controller
         {
             return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
         }
+    }
+
+    [HttpGet("RequestUser")]
+    public async Task<IActionResult> RequestUser()
+    {
+        try
+        {
+            User user = new User("Markus"); // implement random name generation
+            user = await chatDatabaseService.AddUserAsync(user);
+            return Ok(new ChatRestApiResponse<User> { Data = user });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
+    
     }
 }
 
