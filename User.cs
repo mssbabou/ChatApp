@@ -9,11 +9,13 @@ public class User
 
     public string UserId { get; private set; }
     public string Username { get; set; }
+    public DateTime CreatedAt { get; private set; }
     
     public User(string username)
     {
         Username = username;
 
         UserId = Guid.NewGuid().ToString();
+        CreatedAt = DateTime.Now;
     }
 }
