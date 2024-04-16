@@ -16,7 +16,7 @@ document.getElementById("send-button").onclick = function() {
 
 document.getElementById("message-input").addEventListener("keypress",function(event){
     document.getElementById("character-input").textContent = document.getElementById("message-input").value.length+1 + "/500";
-    if (event.key === 'Enter' && document.getElementById("message-input").value.trim() != "")
+    if (event.key === 'Enter' && document.getElementById("message-input").value.trim() != "" && document.getElementById("message-input").value.length+1 <= 500)
     {
         event.preventDefault();
         document.getElementById("send-button").click();
