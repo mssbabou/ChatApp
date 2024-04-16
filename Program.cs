@@ -1,8 +1,15 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the DI container.
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+builder.Services.AddAuthentication(options => 
+{
+    options.DefaultAuthenticateScheme = "ApiKey";
+    options.DefaultChallengeScheme = "ApiKey";
+}).AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
+
 builder.Services.AddScoped<MongoDbContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddControllers();
@@ -12,6 +19,31 @@ builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChatApp API", Version = "v1" });
+
+    // Define the BearerAuth scheme
+    c.AddSecurityDefinition("BearerAuth", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Input your Bearer token in this format - Bearer {your token here}"
+    });
+
+    // Apply the BearerAuth scheme globally to all operations
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "BearerAuth"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 var app = builder.Build();
@@ -32,11 +64,13 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
-// Enable middleware to serve generated Swagger as a JSON endpoint.
-app.UseSwagger();
+app.UseAuthentication();
+app.UseAuthorization();
 
+// Enable middleware to serve generated Swagger as a JSON endpoint.
 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
 // specifying the Swagger JSON endpoint.
+app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatApp Api V1");

@@ -20,9 +20,6 @@ public class ChatDatabaseService
 
         chatMessagesCollection = dbContext.GetCollection<ChatMessage>(ChatMessagesCollectionName);
         userCollection = dbContext.GetCollection<User>(UsersCollectionName);
-
-        CreateFieldIndex(ChatMessagesCollectionName, "Id").Wait();
-        CreateFieldIndex(UsersCollectionName, "UserId").Wait();
     }
     #endregion
 
@@ -74,7 +71,7 @@ public class ChatDatabaseService
         return user;
     }
 
-    public async Task<User> AddUser(User user)
+    public async Task<User> AddUserAsync(User user)
     {
         try
         {
