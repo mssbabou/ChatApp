@@ -24,8 +24,9 @@ document.getElementById("message-input").addEventListener("keypress",function(ev
     }
 });
 
-connection.on("ReceiveMessage", function (chatMessage) {
+connection.on("ReceiveMessage", function (id) {
 
+    fetch('/api/GetMessage?id=' + id)
     var newMessage = document.createElement("div");
     newMessage.className = chatMessage.user == connection.connectionId ? "message sent" : "message received";
     newMessage.textContent = chatMessage.message;
