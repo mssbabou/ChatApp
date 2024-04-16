@@ -1,5 +1,5 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chathub", { accessTokenFactory: () => '1234' })
+    .withUrl("/chathub", { accessTokenFactory: () => 'f4bc5f0c-a743-4c4b-8591-a33946c820ee' })
     .build();
 
 document.getElementById("send-button").onclick = function() {
@@ -7,7 +7,7 @@ document.getElementById("send-button").onclick = function() {
     {
         const message = document.getElementById("message-input").value;
     document.getElementById("message-input").value = "";
-    connection.invoke("SendMessage", "User", message).catch(function(err) {
+    connection.invoke("SendMessage", message).catch(function(err) {
         return console.error(err.toString());
     });
     }

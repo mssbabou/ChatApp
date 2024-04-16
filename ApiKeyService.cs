@@ -5,10 +5,15 @@ public interface IApiKeyService
 
 public class ApiKeyService : IApiKeyService
 {
-    private const string tempApiKey = "1234";
+    private readonly ChatDatabaseService chatDatabaseService;
+
+    public ApiKeyService(ChatDatabaseService chatDatabaseService)
+    {
+        this.chatDatabaseService = chatDatabaseService;
+    }
 
     public Task<bool> ValidateApiKeyAsync(string apiKey)
     {
-        return Task.FromResult(apiKey == tempApiKey);
+        return Task.FromResult(chatDatabaseService.VerifyUser(apiKey).Result);
     }
 }

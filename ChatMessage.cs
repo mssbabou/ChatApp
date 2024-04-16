@@ -8,7 +8,7 @@ public class ChatMessage
     public string? Id { get; private set; }
 
     public string User { get; set; }
-    public string Message { get; set; }
+    public string Message { get; private set; }
     public DateTime TimeStamp { get; private set; }
 
     public ChatMessage(string user, string message)

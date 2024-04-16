@@ -11,10 +11,15 @@ public class ChatHub : Hub
         this.chatDatabaseService = chatDatabaseService;
     }
 
-    public async Task SendMessage(string user, string message)
+    public async Task SendMessage(string message)
     {
-        ChatMessage chatMessage = new ChatMessage(Context.ConnectionId, message);
-        await Clients.All.SendAsync("ReceiveMessage", chatMessage);
-        await chatDatabaseService.AddMessageAsync(chatMessage);
+        if (Context.GetHttpContext().Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValues))
+        {
+            string userId = authorizationHeaderValues.FirstOrDefault()!["Bearer ".Length..].Trim();
+
+            ChatMessage chatMessage = new ChatMessage(userId, message);
+            await Clients.All.SendAsync("ReceiveMessage", chatMessage);
+            await chatDatabaseService.AddMessageAsync(chatMessage);
+        }
     }
 }

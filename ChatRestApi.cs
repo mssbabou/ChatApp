@@ -30,7 +30,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            var message = await chatDatabaseService.GetMessageAsync(id);
+            ChatMessage message = await chatDatabaseService.GetMessageAsync(id);
             return Ok(new ChatRestApiResponse<ChatMessage> { Data = message });
         }
         catch (Exception ex)

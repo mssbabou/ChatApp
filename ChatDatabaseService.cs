@@ -31,6 +31,7 @@ public class ChatDatabaseService
         {
             throw new Exception("Message not found");
         }
+        message.User = (await GetUser(message.User)).Username;
         return message;
     }
 
@@ -58,7 +59,23 @@ public class ChatDatabaseService
         {
             throw new Exception("No messages found");
         }
+
+        foreach (var message in messages)
+        {
+            message.User = (await GetUser(message.User)).Username;
+        }
         return messages;
+    }
+
+    public async Task<bool> VerifyUser(string userId, int minutesToExpire = 0)
+    {
+        var user = await GetUser(userId);
+
+        if (user == null) return false;
+
+        if (minutesToExpire == 0) return true;
+
+        return user.CreatedAt.AddMinutes(minutesToExpire) > DateTime.UtcNow;
     }
 
     public async Task<User> GetUser(string userId)
