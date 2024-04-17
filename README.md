@@ -20,7 +20,7 @@ ChatApp is a real-time chat application built with ASP.NET Core, SignalR, and Mo
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/yourusername/ChatApp.git
+git clone https://github.com/mssbabou/ChatApp.git
 ```
 
 2. Navigate to the project directory:
