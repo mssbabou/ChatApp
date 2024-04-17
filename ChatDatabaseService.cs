@@ -48,10 +48,9 @@ public class ChatDatabaseService
         }
     }
 
-    public async Task<List<ChatMessage>> GetLastMessagesAsync(int start, int count) 
+    public async Task<List<ChatMessage>> GetMessagesDescAsync(int start, int count) 
     {
         var messages = await chatMessagesCollection.Find(_ => true)
-            .SortByDescending(m => m.Id)
             .Skip(start)
             .Limit(count)
             .ToListAsync();

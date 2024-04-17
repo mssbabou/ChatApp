@@ -83,12 +83,11 @@ app.MapHub<ChatHub>("/chathub");
 app.MapControllers();
 
 // Test MongoDB connection on separate thread
-Task testMongoDBConnection = new(async() =>
+Task testMongoDBConnection = Task.Run(async() =>
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<MongoDbContext>();
     await dbContext.TestConnectionAsync();
 });
-testMongoDBConnection.Start();
 
 app.Run();

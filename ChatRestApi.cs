@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,11 @@ public class ChatRestApi : Controller
     {
         try
         {
-            var messages = await chatDatabaseService.GetLastMessagesAsync(start, count);
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var messages = await chatDatabaseService.GetMessagesDescAsync(start, count);
+            stopwatch.Stop();
+            Console.WriteLine($"GetLastMessagesDesc: {stopwatch.ElapsedMilliseconds}ms");
             return Ok(new ChatRestApiResponse<List<ChatMessage>> { Data = messages });
         }
         catch (Exception ex)
