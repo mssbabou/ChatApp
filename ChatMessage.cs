@@ -7,13 +7,15 @@ public class ChatMessage
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; private set; }
 
+    public string PublicUserId { get; private set; }
     public string UserName { get; set; }
     public string Message { get; private set; }
     public DateTime TimeStamp { get; private set; }
 
-    public ChatMessage(string user, string message)
+    public ChatMessage(PublicUserView publicUserView, string message)
     {
-        UserName = user;
+        PublicUserId = publicUserView.PublicUserId;
+        UserName = publicUserView.Username;
         Message = message;
         TimeStamp = DateTime.UtcNow;
     }

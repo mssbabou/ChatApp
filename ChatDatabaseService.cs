@@ -60,9 +60,9 @@ public class ChatDatabaseService
         return messages;
     }
 
-    public async Task<bool> VerifyUser(string userId, int minutesToExpire = 0)
+    public async Task<bool> VerifyUserPrivateKey(string privateUserId, int minutesToExpire = 0)
     {
-        var user = await GetUserAsync(userId);
+        var user = await userCollection.Find(u => u.PrivateUserId == privateUserId).FirstOrDefaultAsync();
 
         if (user == null) return false;
 
@@ -71,9 +71,9 @@ public class ChatDatabaseService
         return user.CreatedAt.AddMinutes(minutesToExpire) > DateTime.UtcNow;
     }
 
-    public async Task<User> GetUserAsync(string userId)
+    public async Task<User> GetPublicUserAsync(string publicUserId)
     {
-        var user = await userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        var user = await userCollection.Find(u => u.PublicUserId == publicUserId).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new Exception("User not found");
@@ -81,10 +81,21 @@ public class ChatDatabaseService
         return user;
     }
 
-    public async Task<User> AddUserAsync(User user)
+    public async Task<User> GetPrivateUserAsync(string privateUserId)
+    {
+        var user = await userCollection.Find(u => u.PrivateUserId == privateUserId).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+        return user;
+    }
+
+    public async Task<User> AddUserAsync(string userName)
     {
         try
         {
+            var user = new User(userName);
             await userCollection.InsertOneAsync(user);
             return user;
         }

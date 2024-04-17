@@ -62,9 +62,8 @@ public class ChatRestApi : Controller
     {
         try
         {
-            User user = new User("Markus"); // implement random name generation
-            user = await chatDatabaseService.AddUserAsync(user);
-            return Ok(new ChatRestApiResponse<User> { Data = user });
+            PrivateUserView user = new(await chatDatabaseService.AddUserAsync("markus")); // implement random name generation
+            return Ok(new ChatRestApiResponse<PrivateUserView> { Data = user });
         }
         catch (Exception ex)
         {

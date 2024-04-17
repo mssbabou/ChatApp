@@ -14,6 +14,6 @@ public class ApiKeyService : IApiKeyService
 
     public Task<bool> ValidateApiKeyAsync(string apiKey)
     {
-        return Task.FromResult(chatDatabaseService.VerifyUser(apiKey).Result);
+        return Task.FromResult(chatDatabaseService.VerifyUserPrivateKey(apiKey).Result);
     }
 }

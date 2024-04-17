@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,5 +91,8 @@ Task testMongoDBConnection = Task.Run(async() =>
     var dbContext = scope.ServiceProvider.GetRequiredService<MongoDbContext>();
     await dbContext.TestConnectionAsync();
 });
+
+var scope = app.Services.CreateScope();
+var chatDatabaseService = scope.ServiceProvider.GetRequiredService<ChatDatabaseService>();
 
 app.Run();
