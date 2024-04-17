@@ -13,7 +13,7 @@ ChatApp is a real-time chat application built with ASP.NET Core, SignalR, and Mo
 
 ### Prerequisites
 
-- .NET Core 3.1 or later
+- .NET Core 8.0 or later
 - MongoDB
 
 ### Running the Application
