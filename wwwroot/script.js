@@ -56,8 +56,6 @@ connection.on("ReceiveMessage", function (id) {
         var chatMessage = data.data;
 
         AddChatMessage(chatMessage);
-
-        console.log(user + ": " + message);
     });
 });
 
@@ -68,7 +66,7 @@ connection.start().catch(function(err) {
 function AddChatMessage(message)
 {
     var newMessage = document.createElement("div");
-    newMessage.className = message.user == connection.connectionId ? "message sent" : "message received";
+    newMessage.className = "message received";
     newMessage.textContent = message.message;
 
     document.getElementById("message-list").appendChild(newMessage);    

@@ -7,8 +7,8 @@ public class ChatDatabaseService
     public const string ChatMessagesCollectionName = "ChatMessages";
     public const string UsersCollectionName = "Users";
 
-    private readonly IMongoCollection<ChatMessage> chatMessagesCollection;
-    private readonly IMongoCollection<User> userCollection;
+    public readonly IMongoCollection<ChatMessage> chatMessagesCollection;
+    public readonly IMongoCollection<User> userCollection;
 
     private readonly MongoDbContext dbContext;
     #endregion
@@ -31,7 +31,7 @@ public class ChatDatabaseService
         {
             throw new Exception("Message not found");
         }
-        message.User = (await GetUser(message.User)).Username;
+
         return message;
     }
 
@@ -50,25 +50,19 @@ public class ChatDatabaseService
 
     public async Task<List<ChatMessage>> GetMessagesDescAsync(int start, int count) 
     {
-        var messages = await chatMessagesCollection.Find(_ => true)
-            .Skip(start)
-            .Limit(count)
-            .ToListAsync();
+        var messages = await chatMessagesCollection.Find(_ => true).Skip(start).Limit(count).ToListAsync();
+
         if (messages == null || messages.Count == 0)
         {
             throw new Exception("No messages found");
         }
 
-        foreach (var message in messages)
-        {
-            message.User = (await GetUser(message.User)).Username;
-        }
         return messages;
     }
 
     public async Task<bool> VerifyUser(string userId, int minutesToExpire = 0)
     {
-        var user = await GetUser(userId);
+        var user = await GetUserAsync(userId);
 
         if (user == null) return false;
 
@@ -77,7 +71,7 @@ public class ChatDatabaseService
         return user.CreatedAt.AddMinutes(minutesToExpire) > DateTime.UtcNow;
     }
 
-    public async Task<User> GetUser(string userId)
+    public async Task<User> GetUserAsync(string userId)
     {
         var user = await userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
         if (user == null)

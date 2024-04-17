@@ -17,7 +17,8 @@ public class ChatHub : Hub
         {
             string userId = authorizationHeaderValues.FirstOrDefault()!["Bearer ".Length..].Trim();
 
-            ChatMessage chatMessage = new ChatMessage(userId, message);
+            User user = await chatDatabaseService.GetUserAsync(userId);
+            ChatMessage chatMessage = new ChatMessage(user.Username, message);
             chatMessage = await chatDatabaseService.AddMessageAsync(chatMessage);
             await Clients.All.SendAsync("ReceiveMessage", chatMessage.Id);
         }

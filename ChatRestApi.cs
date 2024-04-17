@@ -17,11 +17,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
             var messages = await chatDatabaseService.GetMessagesDescAsync(start, count);
-            stopwatch.Stop();
-            Console.WriteLine($"GetLastMessagesDesc: {stopwatch.ElapsedMilliseconds}ms");
             return Ok(new ChatRestApiResponse<List<ChatMessage>> { Data = messages });
         }
         catch (Exception ex)
@@ -44,13 +40,14 @@ public class ChatRestApi : Controller
         }
     }
 
+    /*
     [Authorize]
     [HttpPost("AddMessage")]
-    public async Task<IActionResult> AddMessage([FromBody] ChatMessage message)
+    public async Task<IActionResult> AddMessage([FromBody] string message)
     {
         try
         {
-            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(message);
+            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(User.Identity.Name, message));
             return Ok(new ChatRestApiResponse<ChatMessage> { Data = dbMessage });
         }
         catch (Exception ex)
@@ -58,6 +55,7 @@ public class ChatRestApi : Controller
             return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
         }
     }
+    */
 
     [HttpGet("RequestUser")]
     public async Task<IActionResult> RequestUser()
