@@ -3,30 +3,47 @@ let connection = null;
 // Function to initialize the API key and SignalR connection
 async function initialize() {
     try {
-        let apiKey = localStorage.getItem("privateUserId");
-        if (apiKey)
+        let privateUserId = localStorage.getItem("privateUserId");
+        let publicUserId = null;
+        if (privateUserId)
         {            
-            console.log("API key found in local storage");
+            const user = await fetchPrivateUser(privateUserId);
+            console.log(user);
+            if (user == null)
+            {
+                const user = await fetchUserRequest();
+                privateUserId = user.privateUserId;
+                publicUserId = user.publicUserId;
+                localStorage.setItem("privateUserId", privateUserId);
+                console.log("API key not found in database");
+            }
+            else
+            {
+                publicUserId = user.publicUserId;
+                console.log("API key found in database");
+            }
         }
         else
         {
-            const user = await fetchUser();
-            apiKey = user.privateUserId;  // Get API key dynamically
-            localStorage.setItem("privateUserId", apiKey);
+            const user = await fetchUserRequest();
+            privateUserId = user.privateUserId;
+            publicUserId = user.publicUserId;
+            localStorage.setItem("privateUserId", privateUserId);
         }
         
-        await setupChatHubConnection(apiKey);
+        await setupChatHubConnection(privateUserId);
 
-        AddChatMessages(await fetchMessages(0, 100, apiKey));
+        console.log(privateUserId);
+        AddChatMessages(await fetchMessages(0, 100, privateUserId), publicUserId);
 
-        setupAPIInteractions(apiKey);
+        setupAPIInteractions(privateUserId, publicUserId);
     } catch (err) {
         console.error("Error initializing the application:", err);
     }
 }
 
 // Set up API interactions that use the API key
-function setupAPIInteractions(apiKey) {
+function setupAPIInteractions(privateUserId, publicUserId) {
     document.getElementById("send-button").onclick = async () => {
         const inputElement = document.getElementById("message-input");
         const message = inputElement.value.trim();
@@ -51,9 +68,9 @@ function setupAPIInteractions(apiKey) {
 
     connection.on("ReceiveMessage", async (id) => {
         try {
-            const message = await fetchMessage(id, apiKey);
+            const message = await fetchMessage(id, privateUserId);
             if (message) {
-                AddChatMessage(message);
+                AddChatMessage(message, publicUserId);
             }
         } catch (err) {
             console.error("Error receiving message:", err);
@@ -74,8 +91,18 @@ async function setupChatHubConnection(apiKey) {
     }
 }
 
+// Fetch a private user
+async function fetchPrivateUser(privateUserId) {
+    const response = await fetch(`/api/getPrivateUser?privateUserId=${privateUserId}`);
+    const data = await response.json();
+    if (!data || !data.status) {
+        return null;
+    }
+    return data.data;
+}
+
 // Fetch a user request
-async function fetchUser() {
+async function fetchUserRequest() {
     const response = await fetch('/api/requestUser');
     const data = await response.json();
     if (!data || !data.status) {
@@ -109,18 +136,31 @@ async function fetchMessages(start, count, apiKey) {
     return data.data;
 }
 
-function AddChatMessages(messages) {
+function AddChatMessages(messages, publicUserId) {
     messages.forEach(message => {
-        AddChatMessage(message);
+        AddChatMessage(message, publicUserId);
     });
 }
 
 // Function to add a chat message to the DOM
-function AddChatMessage(message) {
-    const newMessage = document.createElement("div");
-    newMessage.className = "message received";
-    newMessage.textContent = message.message;
-    document.getElementById("message-list").appendChild(newMessage);
+function AddChatMessage(message, publicUserId) {
+    const messageHtml = createMessageTemplate(message, publicUserId == message.publicUserId);
+    const messageList = document.getElementById("message-list");
+    messageList.innerHTML += messageHtml;
+}
+
+function createMessageTemplate(message, sent = false) {
+    return `
+        <div class="message ${sent ? "sent" : "received"}">
+            <div class="message-header">
+                <h2>${message.userName}</h2>
+                <span>${new Date(message.timeStamp).toLocaleDateString()}</span>
+            </div>
+            <div class="message-body">
+                <p>${message.message}</p>
+            </div>
+        </div>
+    `;
 }
 
 // Start the application

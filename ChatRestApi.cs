@@ -62,7 +62,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            PrivateUserView user = new(await chatDatabaseService.AddUserAsync(NameGenerator.GetRandomName())); // implement random name generation
+            PrivateUserView user = new(await chatDatabaseService.AddUserAsync("TestUser"));
             return Ok(new ChatRestApiResponse<PrivateUserView> { Data = user });
         }
         catch (Exception ex)
@@ -70,6 +70,34 @@ public class ChatRestApi : Controller
             return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
         }
     
+    }
+
+    [HttpGet("GetPrivateUser")]
+    public async Task<IActionResult> GetPrivateUser(string privateUserId)
+    {
+        try
+        {
+            PrivateUserView user = new(await chatDatabaseService.GetPrivateUserAsync(privateUserId));
+            return Ok(new ChatRestApiResponse<PrivateUserView> { Data = user });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
+    }
+
+    [HttpGet("GetPublicUser")]
+    public async Task<IActionResult> GetPublicUser(string publicUserId)
+    {
+        try
+        {
+            PublicUserView user = new(await chatDatabaseService.GetPublicUserAsync(publicUserId));
+            return Ok(new ChatRestApiResponse<PublicUserView> { Data = user });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
     }
 }
 
