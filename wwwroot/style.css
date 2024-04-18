@@ -18,6 +18,17 @@ body {
   height: 99vh;
 }
 
+.message{
+  background-color: #3b3b3b;
+  align-self: flex-end;
+  color: white;
+  overflow-wrap: break-word;
+}
+
+.message-body p{
+  margin-top: 0.5vh;
+  margin-bottom: 0.5vh;
+}
 .chat-box {
   overflow-y: auto;
   display: flex;
@@ -26,6 +37,22 @@ body {
   flex-grow: 1;
   padding: 10px;
   max-height: calc(100vh - 90px);
+}
+.message-header{
+  display: flex;
+  flex-direction: row;
+
+}
+.message-header span{
+  margin-left: 1vh;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-size: 12px;
+}
+.message-header h2{
+  font-size: 16px;
+  margin: 0px;
 }
 
 .message {
@@ -42,9 +69,6 @@ body {
 
 .received {
   background-color: #3b3b3b;
-  align-self: flex-start;
-  color: white;
-  overflow-wrap: break-word;
 }
 
 textarea{
@@ -54,9 +78,6 @@ textarea{
 
 .sent {
   background-color: #686868;
-  align-self: flex-end;
-  color: white;
-  overflow-wrap: break-word;
 }
 .characters{
   display: flex;
