@@ -18,13 +18,6 @@ body {
   height: 99vh;
 }
 
-.message{
-  background-color: #3b3b3b;
-  align-self: flex-end;
-  color: white;
-  overflow-wrap: break-word;
-}
-
 .message-body p{
   margin-top: 0.5vh;
   margin-bottom: 0.5vh;
@@ -60,6 +53,10 @@ body {
   padding: 8px 12px;
   border-radius: 5px;
   max-width: 100%;
+  background-color: #3b3b3b;
+  align-self: flex-end;
+  color: white;
+  overflow-wrap: break-word;
 }
 
 .message-content {
