@@ -1,51 +1,28 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class User
+public class User(string username)
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; private set; }
 
-    public string PublicUserId { get; private set; }
-    public string PrivateUserId { get; private set; }
-    public string Username { get; set; }
-    public DateTime CreatedAt { get; private set; }
-    
-    public User(string username)
-    {
-        Username = username;
-
-        PublicUserId = Guid.NewGuid().ToString();
-        PrivateUserId = Guid.NewGuid().ToString();
-        CreatedAt = DateTime.UtcNow;
-    }
+    public string PublicUserId { get; private set; } = Guid.NewGuid().ToString();
+    public string PrivateUserId { get; private set; } = Guid.NewGuid().ToString();
+    public string Username { get; set; } = username;
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 }
 
-public class PublicUserView
+public class PublicUserView(User user)
 {
-    public string PublicUserId { get; set; }
-    public string Username { get; set; }
-
-    public PublicUserView(User user)
-    {
-        PublicUserId = user.PublicUserId;
-        Username = user.Username;
-    }
+    public string PublicUserId { get; private set; } = user.PublicUserId;
+    public string Username { get; private set; } = user.Username;
 }
 
-public class PrivateUserView
+public class PrivateUserView(User user)
 {
-    public string PublicUserId { get; set; }
-    public string PrivateUserId { get; set; }
-    public string Username { get; set; }
-    public DateTime CreatedAt { get; set; }
-
-    public PrivateUserView(User user)
-    {
-        PublicUserId = user.PublicUserId;
-        PrivateUserId = user.PrivateUserId;
-        Username = user.Username;
-        CreatedAt = user.CreatedAt;
-    }
+    public string PublicUserId { get; private set; } = user.PublicUserId;
+    public string PrivateUserId { get; private set; } = user.PrivateUserId;
+    public string Username { get; private set; } = user.Username;
+    public DateTime CreatedAt { get; private set; } = user.CreatedAt;
 }

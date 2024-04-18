@@ -3,8 +3,17 @@ let connection = null;
 // Function to initialize the API key and SignalR connection
 async function initialize() {
     try {
-        const user = await fetchUser();
-        const apiKey = user.privateUserId;  // Get API key dynamically
+        let apiKey = localStorage.getItem("privateUserId");
+        if (apiKey)
+        {            
+            console.log("API key found in local storage");
+        }
+        else
+        {
+            const user = await fetchUser();
+            apiKey = user.privateUserId;  // Get API key dynamically
+            localStorage.setItem("privateUserId", apiKey);
+        }
         
         await setupChatHubConnection(apiKey);
 

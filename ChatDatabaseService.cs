@@ -20,6 +20,9 @@ public class ChatDatabaseService
 
         chatMessagesCollection = dbContext.GetCollection<ChatMessage>(ChatMessagesCollectionName);
         userCollection = dbContext.GetCollection<User>(UsersCollectionName);
+
+        userCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PublicUserId)));
+        userCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PrivateUserId)));
     }
     #endregion
 
