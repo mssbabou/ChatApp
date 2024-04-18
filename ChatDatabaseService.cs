@@ -108,6 +108,12 @@ public class ChatDatabaseService
         }
     }
 
+    public async Task<bool> IsNameTaken(string name)
+    {
+        var user = await userCollection.Find(u => u.Username == name).FirstOrDefaultAsync();
+        return user != null;
+    }
+
     public async Task CreateFieldIndex(string collection, string fieldName, string type = "")
     {
         var indexKeysDefinition = Builders<BsonDocument>.IndexKeys.Ascending(fieldName);

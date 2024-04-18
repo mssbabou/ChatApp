@@ -14,6 +14,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<MongoDbContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
+builder.Services.AddScoped<NameGenerator>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 

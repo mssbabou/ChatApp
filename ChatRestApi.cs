@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 public class ChatRestApi : Controller
 {
     private readonly ChatDatabaseService chatDatabaseService;
+    private readonly NameGenerator nameGenerator;
 
-    public ChatRestApi(ChatDatabaseService chatDatabaseService)
+    public ChatRestApi(ChatDatabaseService chatDatabaseService, NameGenerator nameGenerator)
     {
         this.chatDatabaseService = chatDatabaseService;
+        this.nameGenerator = nameGenerator;
     }
 
     [HttpGet("GetMessagesDesc")]
@@ -62,7 +64,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            PrivateUserView user = new(await chatDatabaseService.AddUserAsync("TestUser"));
+            PrivateUserView user = new(await chatDatabaseService.AddUserAsync(await nameGenerator.GetRandomUniqueName()));
             return Ok(new ChatRestApiResponse<PrivateUserView> { Data = user });
         }
         catch (Exception ex)
