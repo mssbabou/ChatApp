@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.SignalR;
 public class ChatHub : Hub
 {
     private readonly ChatDatabaseService chatDatabaseService;
+    private readonly IApiKeyService apiKeyService;
 
-    public ChatHub(ChatDatabaseService chatDatabaseService)
+    public ChatHub(ChatDatabaseService chatDatabaseService, IApiKeyService apiKeyService)
     {
         this.chatDatabaseService = chatDatabaseService;
+        this.apiKeyService = apiKeyService;
     }
 
     public async Task SendMessage(string message)
     {
-        if (Context.GetHttpContext().Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValues))
-        {
-            string userId = authorizationHeaderValues.FirstOrDefault()!["Bearer ".Length..].Trim();
+        string userId = apiKeyService.GetApiKey(Context.GetHttpContext());
+        if (string.IsNullOrEmpty(userId)) return;
 
-            User user = await chatDatabaseService.GetPrivateUserAsync(userId);
-            ChatMessage chatMessage = new ChatMessage(new PublicUserView(user), message);
-            chatMessage = await chatDatabaseService.AddMessageAsync(chatMessage);
-            await Clients.All.SendAsync("ReceiveMessage", chatMessage.Id);
-        }
+        User user = await chatDatabaseService.GetPrivateUserAsync(userId);
+        ChatMessage chatMessage = new ChatMessage(new PublicUserView(user), message);
+        chatMessage = await chatDatabaseService.AddMessageAsync(chatMessage);
+        await Clients.All.SendAsync("ReceiveMessage", chatMessage.Id);
     }
 }
