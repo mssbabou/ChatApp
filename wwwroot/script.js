@@ -154,7 +154,7 @@ function createMessageTemplate(message, sent = false) {
         <div class="message ${sent ? "sent" : "received"}">
             <div class="message-header">
                 <h2>${message.userName}</h2>
-                <span>${new Date(message.timeStamp).toLocaleDateString()}</span>
+                <span>${new Date(message.timeStamp).toLocaleString('en-GB')}</span>
             </div>
             <div class="message-body">
                 <p>${message.message}</p>
