@@ -4,7 +4,7 @@ services:
   ChatApp:
     depends_on:
       - ChatAppMongoDB
-    build: /ASP.NET-Backend/
+    build: /DotNet-Backend/
     image: chatapp
     ports:
       - "80:80"
