@@ -5,17 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api")]
 public class ChatRestApi : Controller
 {
+    #region Fields
     private readonly ChatDatabaseService chatDatabaseService;
+    private readonly IApiKeyService apiKeyService;
     private readonly NameGenerator nameGenerator;
+    #endregion
 
-    public ChatRestApi(ChatDatabaseService chatDatabaseService, NameGenerator nameGenerator)
+    #region Constructor
+    public ChatRestApi(ChatDatabaseService chatDatabaseService, IApiKeyService apiKeyService, NameGenerator nameGenerator)
     {
         this.chatDatabaseService = chatDatabaseService;
+        this.apiKeyService = apiKeyService;
         this.nameGenerator = nameGenerator;
     }
+    #endregion
 
+    #region Methods
+    [Authorize]
     [HttpGet("GetMessagesDesc")]
-    public async Task<IActionResult> GetLastMessagesDesc(int start = 0, int count = 100)
+    public async Task<IActionResult> GetLastMessages(int start = 0, int count = 100)
     {
         try
         {
@@ -28,6 +36,7 @@ public class ChatRestApi : Controller
         }
     }
 
+    [Authorize]
     [HttpGet("GetMessage")]
     public async Task<IActionResult> GetMessage(string id)
     {
@@ -42,14 +51,17 @@ public class ChatRestApi : Controller
         }
     }
 
-    /*
     [Authorize]
     [HttpPost("AddMessage")]
     public async Task<IActionResult> AddMessage([FromBody] string message)
     {
         try
         {
-            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(User.Identity.Name, message));
+            string userId = apiKeyService.GetApiKey(HttpContext);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            User user = await chatDatabaseService.GetPrivateUserAsync(userId);
+            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserView(user), message));
             return Ok(new ChatRestApiResponse<ChatMessage> { Data = dbMessage });
         }
         catch (Exception ex)
@@ -57,7 +69,6 @@ public class ChatRestApi : Controller
             return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
         }
     }
-    */
 
     [HttpGet("RequestUser")]
     public async Task<IActionResult> RequestUser()
@@ -101,6 +112,7 @@ public class ChatRestApi : Controller
             return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
         }
     }
+    #endregion
 }
 
 public class ChatRestApiResponse<T>

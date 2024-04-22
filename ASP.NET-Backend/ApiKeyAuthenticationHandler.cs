@@ -5,9 +5,13 @@ using Microsoft.Extensions.Options;
 
 public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private const string ApiKeyHeaderName = "X-Api-Key";
+    #region Fields
+    public static string ApiKeyHeaderName = "X-Api-Key";
+    public static string AuthorizationHeader = "Authorization";
     private readonly IApiKeyService apiKeyService;
+    #endregion
 
+    #region Constructor
     public ApiKeyAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
@@ -17,12 +21,14 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
     {
         this.apiKeyService = apiKeyService;
     }
+    #endregion
 
+    #region Methods
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         string providedApiKey;
 
-        if (Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValues))
+        if (Request.Headers.TryGetValue(AuthorizationHeader, out var authorizationHeaderValues))
         {
             var bearerToken = authorizationHeaderValues.FirstOrDefault();
             if (string.IsNullOrWhiteSpace(bearerToken))
@@ -60,4 +66,5 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
 
         return AuthenticateResult.Success(ticket);
     }
+    #endregion
 }

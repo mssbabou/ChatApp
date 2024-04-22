@@ -1,19 +1,23 @@
 public class NameGenerator
 {
+    #region Fields
     public string[] FirstNames;
     public string[] LastNames;
-    private static Random random = new Random();
-
+    private readonly Random random = new Random();
     private readonly ChatDatabaseService chatDatabaseService;
+    #endregion
 
+    #region Constructor
     public NameGenerator(ChatDatabaseService chatDatabaseService)
     {
         this.chatDatabaseService = chatDatabaseService;
 
-        FirstNames = File.ReadAllLines("NameFiles/FirstNames.csv");
-        LastNames = File.ReadAllLines("NameFiles/LastNames.csv");
+        FirstNames = File.ReadAllLines("Namefiles/FirstNames.csv");
+        LastNames = File.ReadAllLines("Namefiles/LastNames.csv");
     }
+    #endregion
 
+    #region Methods
     public string GetRandomName()
     {
         int firstNameIndex = random.Next(0, FirstNames.Length-1);
@@ -31,5 +35,5 @@ public class NameGenerator
         }
         return randomName;
     }
-    
+    #endregion
 }

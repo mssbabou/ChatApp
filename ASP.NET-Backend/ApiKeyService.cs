@@ -1,18 +1,17 @@
-public interface IApiKeyService
-{
-    Task<bool> ValidateApiKeyAsync(string apiKey);
-    string GetApiKey(HttpContext httpContext);
-}
-
 public class ApiKeyService : IApiKeyService
 {
+    #region Fields
     private readonly ChatDatabaseService chatDatabaseService;
+    #endregion
 
+    #region Constructor
     public ApiKeyService(ChatDatabaseService chatDatabaseService)
     {
         this.chatDatabaseService = chatDatabaseService;
     }
+    #endregion
 
+    #region Methods
     public Task<bool> ValidateApiKeyAsync(string apiKey)
     {
         return Task.FromResult(chatDatabaseService.VerifyUserPrivateKey(apiKey).Result);
@@ -20,11 +19,18 @@ public class ApiKeyService : IApiKeyService
 
     public string GetApiKey(HttpContext httpContext)
     {
-        if (httpContext.Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValues))
+        if (httpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationHandler.AuthorizationHeader, out var authorizationHeaderValues))
         {
             return authorizationHeaderValues.FirstOrDefault()!["Bearer ".Length..].Trim();
         }
 
         return null;
     }
+    #endregion
+}
+
+public interface IApiKeyService
+{
+    Task<bool> ValidateApiKeyAsync(string apiKey);
+    string GetApiKey(HttpContext httpContext);
 }

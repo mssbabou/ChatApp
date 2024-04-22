@@ -2,8 +2,11 @@ using MongoDB.Driver;
 
 public class MongoDbContext
 {
+    #region Fields
     public IMongoDatabase Database;
+    #endregion
 
+    #region Constructor
     public MongoDbContext(IConfiguration configuration)
     {
         var connectionString = configuration.GetValue<string>("MongoDB:ConnectionString");
@@ -11,16 +14,14 @@ public class MongoDbContext
         var client = new MongoClient(connectionString);
         Database = client.GetDatabase(databaseName);
     }
+    #endregion
 
+    #region Methods
     public IMongoCollection<T> GetCollection<T>(string name)
     {
         return Database.GetCollection<T>(name);
     }
 
-    /// <summary>
-    /// Test the connection to the MongoDB server
-    /// </summary>
-    /// <returns>True if the connection is successful, false otherwise</returns>
     public async Task<bool> TestConnectionAsync()
     {
         try
@@ -35,4 +36,5 @@ public class MongoDbContext
             return false;
         }
     }
+    #endregion
 }
