@@ -114,12 +114,5 @@ public class ChatDatabaseService
         var user = await userCollection.Find(u => u.Username == name).FirstOrDefaultAsync();
         return user != null;
     }
-
-    public async Task CreateFieldIndex(string collection, string fieldName, string type = "")
-    {
-        var indexKeysDefinition = Builders<BsonDocument>.IndexKeys.Ascending(fieldName);
-        var indexModel = new CreateIndexModel<BsonDocument>(indexKeysDefinition);
-        await dbContext.GetCollection<BsonDocument>(collection).Indexes.CreateOneAsync(indexModel);
-    }
     #endregion
 }
