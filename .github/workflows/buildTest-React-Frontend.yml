@@ -26,7 +26,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-
+        
+    - name: Show Path
+      working-directory: ./React-Frontend
+      run: pwd
+      
     - name: Install dependencies
       working-directory: ./React-Frontend
       run: npm ci
