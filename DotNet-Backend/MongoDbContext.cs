@@ -1,13 +1,13 @@
 using MongoDB.Driver;
 
-public class MongoDbContext
+public class MongoDBContext
 {
     #region Fields
     public IMongoDatabase Database;
     #endregion
 
     #region Constructor
-    public MongoDbContext(IConfiguration configuration)
+    public MongoDBContext(IConfiguration configuration)
     {
         var connectionString = configuration.GetValue<string>("MongoDB:ConnectionString");
         var databaseName = configuration.GetValue<string>("MongoDB:DatabaseName");

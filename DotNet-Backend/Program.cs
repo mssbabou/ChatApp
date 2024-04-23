@@ -12,7 +12,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = "ApiKey";
 }).AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
 
-builder.Services.AddScoped<MongoDbContext>();
+builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddScoped<NameGenerator>();
 builder.Services.AddControllers();
@@ -89,7 +89,7 @@ app.MapControllers();
 Task testMongoDBConnection = Task.Run(async() =>
 {
     using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<MongoDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MongoDBContext>();
     await dbContext.TestConnectionAsync();
 });
 

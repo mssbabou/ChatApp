@@ -10,11 +10,11 @@ public class ChatDatabaseService
     public readonly IMongoCollection<ChatMessage> chatMessagesCollection;
     public readonly IMongoCollection<User> userCollection;
 
-    private readonly MongoDbContext dbContext;
+    private readonly MongoDBContext dbContext;
     #endregion
 
     #region Constructor
-    public ChatDatabaseService(MongoDbContext dbContext)
+    public ChatDatabaseService(MongoDBContext dbContext)
     {
         this.dbContext = dbContext;
 
