@@ -1,20 +1,29 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 [Route("api")]
 public class ChatRestApi : Controller
 {
     #region Fields
     private readonly ChatDatabaseService chatDatabaseService;
+    private readonly NotificationService notificationService;
     private readonly IApiKeyService apiKeyService;
     private readonly NameGenerator nameGenerator;
     #endregion
 
     #region Constructor
-    public ChatRestApi(ChatDatabaseService chatDatabaseService, IApiKeyService apiKeyService, NameGenerator nameGenerator)
+    public ChatRestApi
+    (
+        ChatDatabaseService chatDatabaseService, 
+        NotificationService notificationService,
+        IApiKeyService apiKeyService, 
+        NameGenerator nameGenerator
+    )
     {
         this.chatDatabaseService = chatDatabaseService;
+        this.notificationService = notificationService;
         this.apiKeyService = apiKeyService;
         this.nameGenerator = nameGenerator;
     }
@@ -62,6 +71,9 @@ public class ChatRestApi : Controller
 
             User user = await chatDatabaseService.GetPrivateUserAsync(userId);
             ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserView(user), message));
+
+            await notificationService.NotifyClients(dbMessage.Id);
+
             return Ok(new ChatRestApiResponse<ChatMessage> { Data = dbMessage });
         }
         catch (Exception ex)

@@ -23,6 +23,10 @@ public class ApiKeyService : IApiKeyService
         {
             return authorizationHeaderValues.FirstOrDefault()!["Bearer ".Length..].Trim();
         }
+        else if (httpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationHandler.ApiKeyHeaderName, out var apiKeyHeaderValues))
+        {
+            return apiKeyHeaderValues.FirstOrDefault();
+        }
 
         return null;
     }

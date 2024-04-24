@@ -49,8 +49,7 @@ function setupAPIInteractions(privateUserId, publicUserId) {
         const message = inputElement.value.trim();
         if (message) {
             try {
-                await connection.invoke("SendMessage", message);
-                inputElement.value = ""; // Clear input after sending
+                await fetchAddMessage(message, privateUserId);
             } catch (err) {
                 console.error(err.toString());
             }
@@ -66,7 +65,7 @@ function setupAPIInteractions(privateUserId, publicUserId) {
         }
     });
 
-    connection.on("ReceiveMessage", async (id) => {
+    connection.on("NotifyMessage", async (id) => {
         try {
             const message = await fetchMessage(id, privateUserId);
             if (message) {
@@ -104,6 +103,23 @@ async function fetchPrivateUser(privateUserId) {
 // Fetch a user request
 async function fetchUserRequest() {
     const response = await fetch('/api/requestUser');
+    const data = await response.json();
+    if (!data || !data.status) {
+        return null;
+    }
+    return data.data;
+}
+
+// Add a message to the server
+async function fetchAddMessage(message, apiKey) {
+    const response = await fetch(`/api/AddMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': apiKey
+        },
+        body: JSON.stringify(message)
+    });
     const data = await response.json();
     if (!data || !data.status) {
         return null;
