@@ -44,7 +44,7 @@ The application will start and listen on http://localhost:5000.
 
 1. Navigate to the frontend project directory:
 ```sh
-cd ChatApp/Nextjs-Frontend
+cd ChatApp/React-Frontend
 ```
 2. Install the dependencies:
 ```sh
