@@ -1,14 +1,7 @@
-public class ApiKeyService : IApiKeyService
+public class ApiKeyService(ChatDatabaseService chatDatabaseService) : IApiKeyService
 {
     #region Fields
-    private readonly ChatDatabaseService chatDatabaseService;
-    #endregion
-
-    #region Constructor
-    public ApiKeyService(ChatDatabaseService chatDatabaseService)
-    {
-        this.chatDatabaseService = chatDatabaseService;
-    }
+    private readonly ChatDatabaseService chatDatabaseService = chatDatabaseService;
     #endregion
 
     #region Methods

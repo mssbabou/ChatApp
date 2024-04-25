@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.SignalR;
 
-public class NotificationService
+public class NotificationService(IHubContext<ChatHub> chatHubContext)
 {
-    private readonly IHubContext<ChatHub> chatHubContext;
+    #region Fields
+    private const string NotifyMessageMethod = "NotifyMessage";
 
-    public NotificationService(IHubContext<ChatHub> chatHubContext)
-    {
-        this.chatHubContext = chatHubContext;
-    }
+    private readonly IHubContext<ChatHub> chatHubContext = chatHubContext;
+    #endregion
 
+    #region Methods
     public async Task NotifyClients(string id)
     {
-        await chatHubContext.Clients.All.SendAsync("NotifyMessage", id);
+        await chatHubContext.Clients.All.SendAsync(NotifyMessageMethod, id);
     }
+    #endregion
 }

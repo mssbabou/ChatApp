@@ -1,20 +1,11 @@
-public class NameGenerator
+public class NameGenerator(ChatDatabaseService chatDatabaseService)
 {
     #region Fields
-    public string[] FirstNames;
-    public string[] LastNames;
+    public string[] FirstNames = File.ReadAllLines("Namefiles/FirstNames.csv");
+    public string[] LastNames = File.ReadAllLines("Namefiles/LastNames.csv");
     private readonly Random random = new Random();
-    private readonly ChatDatabaseService chatDatabaseService;
-    #endregion
+    private readonly ChatDatabaseService chatDatabaseService = chatDatabaseService;
 
-    #region Constructor
-    public NameGenerator(ChatDatabaseService chatDatabaseService)
-    {
-        this.chatDatabaseService = chatDatabaseService;
-
-        FirstNames = File.ReadAllLines("Namefiles/FirstNames.csv");
-        LastNames = File.ReadAllLines("Namefiles/LastNames.csv");
-    }
     #endregion
 
     #region Methods

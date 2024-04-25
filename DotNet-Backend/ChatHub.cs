@@ -2,16 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 [Authorize]
-public class ChatHub : Hub
+public class ChatHub(NotificationService notificationService) : Hub
 {
     #region Fields
-    private readonly NotificationService notificationService;
-    #endregion
-
-    #region Constructor
-    public ChatHub(NotificationService notificationService)
-    {
-        this.notificationService = notificationService;
-    }
+    private readonly NotificationService notificationService = notificationService;
     #endregion
 }
