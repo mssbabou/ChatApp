@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   ChatAppReactFrontend:
-    build: /React-Frontend/
+    build: ./React-Frontend/
     image: chatappreactfrontend
     ports:
       - "80:80"
@@ -12,10 +10,10 @@ services:
   ChatAppDotNetBackend:
     depends_on:
       - ChatAppMongoDB
-    build: /DotNet-Backend/
+    build: ./DotNet-Backend/
     image: chatappdotnetbackend
     ports:
-      - "5000:5000"
+      - "3000:3000"
     networks:
       - chat-app-network
 
