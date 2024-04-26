@@ -1,12 +1,13 @@
 # ChatApp
 
-ChatApp is a real-time chat application that leverages modern technologies such as ASP.NET Core, SignalR, MongoDB, Next.js, and Docker to deliver a robust and scalable messaging solution.
+ChatApp is a real-time chat application that leverages modern technologies such as ASP.NET Core, SignalR, MongoDB, Next.js, Material-UI, and Docker to deliver a robust, scalable, and visually appealing messaging solution.
 
 ## Features
 
 - **Real-time communication:** Utilize SignalR for seamless and instant message exchange.
 - **Persistent storage:** Use MongoDB to store chat messages, ensuring data durability.
-- **Scalable architecture:** Employ Next.js for building a scalable and responsive frontend.
+- **Scalable architecture:** Employ Next.js, a powerful React framework, for building a scalable and responsive frontend.
+- **Beautiful UI:** Use Material-UI, a popular React UI framework, for creating a consistent, beautiful, and accessible user interface.
 - **REST API:** Retrieve and manage chat messages through a well-defined RESTful API.
 - **Security:** Implement user authentication using API keys to secure the application.
 
@@ -38,7 +39,7 @@ dotnet restore
 dotnet run
 ```
 
-The application will start and listen on http://localhost:5000.
+The application will start and listen on http://localhost:5001.
 
 ### Running the Next.js Frontend
 
