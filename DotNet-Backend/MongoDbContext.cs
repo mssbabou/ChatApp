@@ -9,7 +9,7 @@ public class MongoDBContext
     #region Constructor
     public MongoDBContext(IConfiguration configuration)
     {
-        var connectionString = configuration.GetValue<string>("MongoDB:ConnectionString");
+        var connectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING") ?? configuration.GetValue<string>("MongoDB:ConnectionString");
         var databaseName = configuration.GetValue<string>("MongoDB:DatabaseName");
         var client = new MongoClient(connectionString);
         Database = client.GetDatabase(databaseName);
