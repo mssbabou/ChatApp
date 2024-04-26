@@ -52,7 +52,7 @@ npm install
 ```
 3. Start the frontend application:
 ```sh
-npm start
+npm run dev
 ```
 
 The frontend will be available at http://localhost:80.
