@@ -75,6 +75,16 @@ function setupAPIInteractions(privateUserId, publicUserId) {
             console.error("Error receiving message:", err);
         }
     });
+
+    connection.on("UserConnected", (user) => {
+        console.log(`User Connected: ${user.username}`);
+        AddChatUser(user, true);
+    });
+
+    connection.on("UserDisconnected", (user) => {
+        console.log(`User Disconnected: ${user.username}`);
+        AddChatUser(user, false);
+    });
 }
 
 // Setup the SignalR connection
@@ -164,6 +174,26 @@ function AddChatMessage(message, publicUserId) {
     const messageList = document.getElementById("message-list");
     messageList.innerHTML += messageHtml;
 }
+
+function AddChatUser(user, connected) {
+    const userHtml = connected ? createUserConnectedTemplate(user) : createUserDisconnectedTemplate(user);
+    const messageList = document.getElementById("message-list");
+    messageList.innerHTML += userHtml;
+
+}
+
+function createUserConnectedTemplate(user) {
+    return `
+        <div class="userConnected">${user.username} connected</div>
+    `;
+}
+
+function createUserDisconnectedTemplate(user) {
+    return `
+        <div class="userConnected">${user.username} disconnected</div>
+    `;
+}
+
 
 function createMessageTemplate(message, sent = false) {
     return `

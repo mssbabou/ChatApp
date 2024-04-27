@@ -20,6 +20,10 @@ public class ApiKeyService(ChatDatabaseService chatDatabaseService) : IApiKeySer
         {
             return apiKeyHeaderValues.FirstOrDefault();
         }
+        else if(httpContext.Request.Query.TryGetValue("access_token", out var apiKeyQueryValues))
+        {
+            return apiKeyQueryValues.FirstOrDefault();
+        }
 
         return null;
     }

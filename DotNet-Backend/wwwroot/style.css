@@ -120,6 +120,11 @@ textarea{
   background-color: #b6b6b6;
 }
 
+.userConnected {
+  margin: 8px;
+  color: #919191;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
       background-color: #272727;
