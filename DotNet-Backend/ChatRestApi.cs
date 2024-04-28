@@ -11,6 +11,7 @@ public class ChatRestApi : Controller
     private readonly NotificationService notificationService;
     private readonly IApiKeyService apiKeyService;
     private readonly NameGenerator nameGenerator;
+    private readonly FileStorage fileStorage;
     #endregion
 
     #region Constructor
@@ -19,13 +20,15 @@ public class ChatRestApi : Controller
         ChatDatabaseService chatDatabaseService, 
         NotificationService notificationService,
         IApiKeyService apiKeyService, 
-        NameGenerator nameGenerator
+        NameGenerator nameGenerator,
+        FileStorage fileStorage
     )
     {
         this.chatDatabaseService = chatDatabaseService;
         this.notificationService = notificationService;
         this.apiKeyService = apiKeyService;
         this.nameGenerator = nameGenerator;
+        this.fileStorage = fileStorage;
     }
     #endregion
 
@@ -75,6 +78,25 @@ public class ChatRestApi : Controller
             await notificationService.NotifyClients(dbMessage.Id);
 
             return Ok(new ChatRestApiResponse<ChatMessage> { Data = dbMessage });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
+    }
+
+    [HttpPost("UploadFile")]
+    public async Task<IActionResult> UploadFile(IFormFile file)
+    {
+        try
+        {
+            int fileSizeLimit = 10 * 1024 * 1024; // 10 MB
+            if (file == null || file.Length == 0) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "" });
+            if (file.Length > fileSizeLimit) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "File Size limit exceeded" });
+
+            string fileName = await fileStorage.SaveFileAsync(file);
+
+            return Ok(new ChatRestApiResponse<string> { Data = fileName });
         }
         catch (Exception ex)
         {

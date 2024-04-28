@@ -12,6 +12,8 @@ services:
       - ChatAppMongoDB
     build: ./DotNet-Backend/
     image: chatappdotnetbackend
+    volumes:
+      - chatapp_filestorage:/attachments
     ports:
       - "5001:5001"
     networks:
@@ -27,6 +29,7 @@ services:
       - chat-app-network
 
 volumes:
+  chatapp_filestorage:
   mongodb_data:
 
 networks:

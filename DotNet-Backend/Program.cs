@@ -16,6 +16,7 @@ builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
+builder.Services.AddScoped<FileStorage>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
