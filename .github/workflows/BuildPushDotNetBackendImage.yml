@@ -34,7 +34,7 @@ jobs:
         run: |
           REPO_NAME="${{ github.repository }}"
           VERSION="${{ github.event.inputs.version }}"
-          REPO_NAME_LOWER=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+          REPO_NAME_LOWER=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]')
           VERSION_LOWER=$(echo $VERSION | tr '[:upper:]' '[:lower:]')
           echo "REPO_NAME_LOWER=${REPO_NAME_LOWER}" >> $GITHUB_ENV
           echo "VERSION_LOWER=${VERSION_LOWER}" >> $GITHUB_ENV
