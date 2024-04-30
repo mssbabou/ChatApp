@@ -34,10 +34,10 @@ jobs:
         run: |
           REPO_NAME="${{ github.repository }}"
           VERSION="${{ github.event.inputs.version }}"
-          echo "REPO_NAME=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]' | tr '/' '-')"
-          echo "VERSION=$(echo $VERSION | tr '[:upper:]' '[:lower:]')"
-          echo "::set-output name=repo_name::$REPO_NAME"
-          echo "::set-output name=version::$VERSION"
+          REPO_NAME_LOWER=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+          VERSION_LOWER=$(echo $VERSION | tr '[:upper:]' '[:lower:]')
+          echo "REPO_NAME_LOWER=${REPO_NAME_LOWER}" >> $GITHUB_ENV
+          echo "VERSION_LOWER=${VERSION_LOWER}" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
@@ -45,4 +45,4 @@ jobs:
           context: ./DotNet-Backend
           file: ./DotNet-Backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ steps.prep.outputs.repo_name }}/dotnet-backend:${{ steps.prep.outputs.version }}
+          tags: ghcr.io/${{ env.REPO_NAME_LOWER }}/dotnet-backend:${{ env.VERSION_LOWER }}
