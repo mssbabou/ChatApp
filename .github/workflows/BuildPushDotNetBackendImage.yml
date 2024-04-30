@@ -1,4 +1,4 @@
-name: Build and Push DotNet Backend Docker Image
+name: Build Backend Image
 
 on:
   workflow_dispatch:
