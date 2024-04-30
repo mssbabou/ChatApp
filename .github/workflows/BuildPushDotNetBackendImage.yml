@@ -35,4 +35,4 @@ jobs:
           context: ./DotNet-Backend
           file: ./DotNet-Backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/dotnet-backend:${{ github.event.inputs.version }}
+          tags: ghcr.io/${{ github.repository | replace: '/', '-' }}/dotnet-backend:${{ github.event.inputs.version | downcase }}
