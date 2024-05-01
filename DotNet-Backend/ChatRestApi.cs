@@ -90,7 +90,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            int fileSizeLimit = 10 * 1024 * 1024; // 10 MB
+            int fileSizeLimit = 5 * 1024 * 1024; // 10 MB
             if (file == null || file.Length == 0) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "" });
             if (file.Length > fileSizeLimit) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "File Size limit exceeded" });
 

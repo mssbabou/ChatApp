@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 
@@ -61,10 +62,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseDefaultFiles();
+var attachmentsPath = Environment.GetEnvironmentVariable("FILESTORAGE_PATH") ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 app.UseStaticFiles(new StaticFileOptions
 {
     ServeUnknownFileTypes = true,
-    DefaultContentType = "application/octet-stream"
+    FileProvider = new PhysicalFileProvider(attachmentsPath),
 });
 
 app.UseRouting();
