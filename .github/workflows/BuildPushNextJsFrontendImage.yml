@@ -42,7 +42,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: ./React-Frontend
-          file: ./React-Frontend/Dockerfile
+          context: ./NextJs-Frontend
+          file: ./NextJs-Frontend/Dockerfile
           push: true
           tags: ghcr.io/${{ env.REPO_NAME_LOWER }}/nextjs-frontend:${{ env.VERSION_LOWER }}
