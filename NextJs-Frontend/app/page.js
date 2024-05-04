@@ -1,56 +1,89 @@
 "use client";
 import { useState } from "react";
+import FlipMove from "react-flip-move";
+import { v4 as uuidv4 } from 'uuid';
+import InfiniteScroll from "react-infinite-scroll-component";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { ArrowUpward, AttachFile } from "@mui/icons-material";
 
 export default function Home() {
-  const [message, setMessage] = useState('');
+  const [messageField, setMessageField] = useState('');
+  const [messages, setMessages] = useState([
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? First" },
+    // Add all your other messages here...
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? last" },
+  ]);
+  const username = "markus";
 
   const handleMessageFieldChange = (event) => {
-    setMessage(event.target.value);
+    setMessageField(event.target.value);
   };
 
-  const messages = [
-    { id: 1, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? First" },
-    { id: 2, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 3, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 4, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 5, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 6, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 7, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 8, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 9, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you?" },
-    { id: 10, timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? last" },
-  ]
+  // Test function before adding the backend
+  function sendMessage(){
+    const newMessage = {
+      id: uuidv4(),
+      timeStamp: new Date().toISOString(), 
+      username: username,
+      message: messageField,
+    };
+
+    //setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageField('');
+  }
+
+  function fetchMessages(){
+    console.log("Fetching messages from the backend...");
+    // Fetch messages from the backend
+    const newMessages = [
+      { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? First" },
+    ];
+
+    //setMessages((prevMessages) => [...newMessages, ...prevMessages]);
+    setMessages((prevMessages) => [...newMessages, ...prevMessages]);
+  }
 
   return (
-    <main className="flex max-h-screen flex-col items-center justify-between">
-      <div className="flex-1 mt-3 mb-3 rounded-xl border-gray border-2 overflow-auto" style={{width: 600}}>
-        {messages.map((message, index) => (
-          <div key={index} className="bg-gray-200 m-2 p-3 rounded-xl">
-            <div className="flex">
-              <h2 className="m-1">{message.username}</h2>
-              <span className="m-1">{message.timeStamp}</span>
-            </div>
-            <div>
-              <p className="m-1">{message.message}</p>
-            </div>
-          </div>
-        ))}
+    <main className="flex flex-col items-center justify-between h-screen">
+      <div className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse" style={{ minWidth: 700 }}>
+        <InfiniteScroll
+          dataLength={messages.length}
+          next={fetchMessages}
+          inverse={true}
+          hasMore={true}
+          loader={<h4>Loading...</h4>}
+          scrollableTarget="scrollableDiv"
+        >
+          <FlipMove duration={250}>
+            {messages.map((message) => (
+              <div key={message.id} className="bg-gray-100 m-2 p-3 rounded-lg shadow" style={{  }}>
+                <div className="flex justify-between">
+                  <h2 className="text-base font-semibold text-gray-900">{message.username}</h2>
+                  <span className="text-xs text-gray-500">{message.timeStamp}</span>
+                </div>
+                <p className="text-gray-800">{message.message}</p>
+              </div>
+            ))}
+          </FlipMove>
+        </InfiniteScroll>
       </div>
-      <div className="flex" style={{width: 600}}>
+      <div className="flex flex-col" style={{ minWidth: 700 }}>
+        <h2 className="ml-auto text-base font-semibold text-gray-900 bg-gray-100 px-4 py-1 border-2 border-gray-200 rounded-t-lg">
+          {username}
+        </h2>
         <TextField
           className="mb-3"
           variant="outlined"
           fullWidth
           multiline
-          maxRows="5"
-          size="3xl"
-          value={message}
+          maxRows={5}
+          size="medium"
+          value={messageField}
           onChange={handleMessageFieldChange}
           InputProps={{
             startAdornment: (
-              <InputAdornment  position="start">
+              <InputAdornment position="start">
                 <IconButton>
                   <AttachFile />
                 </IconButton>
@@ -58,8 +91,8 @@ export default function Home() {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton disabled={message == ''} className="bg-gray-400 rounded-md p-1">
-                  <ArrowUpward className="text-white text-xl" />
+                <IconButton onClick={sendMessage} disabled={messageField === ""} className={`rounded-md p-1 ${messageField ? 'bg-blue-500 hover:bg-blue-700' : 'bg-gray-300'}`}>
+                  <ArrowUpward className="text-white" />
                 </IconButton>
               </InputAdornment>
             )
@@ -67,8 +100,11 @@ export default function Home() {
           sx={{
             '& fieldset': {
               border: 2,
-              borderColor: 'gray-400',
-              borderRadius: 3, // Change this to adjust the border radius
+              borderColor: 'gray',
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 0,
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
             },
           }}
         />

@@ -18,7 +18,10 @@
     "next": "^14.2.3",
     "react": "^18",
     "react-bootstrap": "^2.10.2",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-flip-move": "^3.0.5",
+    "react-infinite-scroll-component": "^6.1.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "eslint": "^8",
