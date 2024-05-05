@@ -10,7 +10,11 @@ export default function Home() {
   const [messageField, setMessageField] = useState('');
   const [messages, setMessages] = useState([
     { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? First" },
-    // Add all your other messages here...
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? Second" },
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? Third" },
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? Fourth" },
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? Fifth" },
+    { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? Sixth" },
     { id: uuidv4(), timeStamp: "2024-01-01", username: "markus", message: "Hello, how are you? last" },
   ]);
   const username = "markus";
@@ -33,6 +37,7 @@ export default function Home() {
     setMessageField('');
   }
 
+  // Test function before adding the backend
   function fetchMessages(){
     console.log("Fetching messages from the backend...");
     // Fetch messages from the backend
@@ -46,27 +51,26 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between h-screen">
-      <div className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse" style={{ minWidth: 700 }}>
+      <div id="scrollableDiv" className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse" style={{ minWidth: 700 }}>
         <InfiniteScroll
-          dataLength={messages.length}
-          next={fetchMessages}
-          inverse={true}
-          hasMore={true}
-          loader={<h4>Loading...</h4>}
-          scrollableTarget="scrollableDiv"
-        >
-          <FlipMove duration={250}>
-            {messages.map((message) => (
-              <div key={message.id} className="bg-gray-100 m-2 p-3 rounded-lg shadow" style={{  }}>
-                <div className="flex justify-between">
-                  <h2 className="text-base font-semibold text-gray-900">{message.username}</h2>
-                  <span className="text-xs text-gray-500">{message.timeStamp}</span>
+            dataLength={messages.length}
+            next={fetchMessages}
+            inverse={true}
+            hasMore={true}
+            scrollableTarget="scrollableDiv"
+          >
+            <FlipMove duration={250}>
+              {messages.map((message) => (
+                <div key={message.id} className="bg-gray-100 m-2 p-3 rounded-lg shadow" style={{  }}>
+                  <div className="flex justify-between">
+                    <h2 className="text-base font-semibold text-gray-900">{message.username}</h2>
+                    <span className="text-xs text-gray-500">{message.timeStamp}</span>
+                  </div>
+                  <p className="text-gray-800">{message.message}</p>
                 </div>
-                <p className="text-gray-800">{message.message}</p>
-              </div>
-            ))}
-          </FlipMove>
-        </InfiniteScroll>
+              ))}
+            </FlipMove>
+          </InfiniteScroll>
       </div>
       <div className="flex flex-col" style={{ minWidth: 700 }}>
         <h2 className="ml-auto text-base font-semibold text-gray-900 bg-gray-100 px-4 py-1 border-2 border-gray-200 rounded-t-lg">
