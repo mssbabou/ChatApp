@@ -16,7 +16,6 @@ COPY . .
 
 # Build the Next.js application
 RUN npm run build
-#RUN npm run export
 
 # Step 2: Set up the Nginx server
 # Use an Nginx base image
@@ -33,6 +32,9 @@ COPY --from=builder /app/out /usr/share/nginx/html
 
 # Expose the port Nginx is listening on
 EXPOSE 80
+
+# Set the backend URL as an environment variable
+ENV BACKEND_URL=ChatAppDotNetBackend:5001
 
 # Start Nginx when the container has provisioned
 CMD ["nginx", "-g", "daemon off;"]

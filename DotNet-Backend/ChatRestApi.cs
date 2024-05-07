@@ -33,7 +33,6 @@ public class ChatRestApi : Controller
     #endregion
 
     #region Methods
-    [Authorize]
     [HttpGet("GetMessagesDesc")]
     public async Task<IActionResult> GetLastMessages(int start = 0, int count = 100)
     {

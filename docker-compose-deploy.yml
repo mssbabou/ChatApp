@@ -1,7 +1,6 @@
 services:
-  ChatAppReactFrontend:
-    build: ./React-Frontend/
-    image: chatappreactfrontend
+  ChatAppNextJsFrontend:
+    image: ghcr.io/mssbabou/chatapp/nextjs-frontend:latest
     ports:
       - "80:80"
     networks:
@@ -10,8 +9,7 @@ services:
   ChatAppDotNetBackend:
     depends_on:
       - ChatAppMongoDB
-    build: ./DotNet-Backend/
-    image: chatappdotnetbackend
+    image: ghcr.io/mssbabou/chatapp/dotnet-backend:latest
     volumes:
       - chatapp_filestorage:/attachments
     ports:
@@ -31,6 +29,6 @@ services:
 volumes:
   chatapp_filestorage:
   mongodb_data:
-
+  
 networks:
   chat-app-network: {}

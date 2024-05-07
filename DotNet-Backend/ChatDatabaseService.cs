@@ -64,6 +64,20 @@ public class ChatDatabaseService
         return messages;
     }
 
+    public async Task<List<ChatMessage>> GetMessagesBehindAsync(string messageId, int count)
+    {
+        var message = await GetMessageAsync(messageId);
+
+        var messages = await chatMessagesCollection.Find(m => int.Parse(m.Id) < int.Parse(message.Id)).SortByDescending(m => m.Id).Limit(count).ToListAsync();
+
+        if (messages == null || messages.Count == 0)
+        {
+            throw new Exception("No messages found");
+        }
+
+        return messages;
+    }
+
     public async Task<bool> VerifyUserPrivateKey(string privateUserId, int minutesToExpire = 0)
     {
         var user = await userCollection.Find(u => u.PrivateUserId == privateUserId).FirstOrDefaultAsync();
