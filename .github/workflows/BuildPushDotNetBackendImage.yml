@@ -46,4 +46,3 @@ jobs:
           file: ./DotNet-Backend/Dockerfile
           push: true
           tags: ghcr.io/${{ env.REPO_NAME_LOWER }}/dotnet-backend:${{ env.VERSION_LOWER }}
-          platforms: linux/amd64, linux/arm64
