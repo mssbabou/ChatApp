@@ -6,8 +6,21 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if(builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("LocalCorsPolicy", policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // Allow only the development frontend origin
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
+
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
-builder.Services.AddAuthentication(options => 
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = "ApiKey";
     options.DefaultChallengeScheme = "ApiKey";
@@ -59,6 +72,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+}else
+{
+    app.UseCors("LocalCorsPolicy");
 }
 
 app.UseDefaultFiles();

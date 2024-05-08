@@ -52,11 +52,11 @@ public class ChatDatabaseService
         }
     }
 
-    public async Task<List<ChatMessage>> GetMessagesDescAsync(int start, int count) 
+    public async Task<List<ChatMessage>> GetMessagesDescAsync(int start, int limit)
     {
-        var messages = await chatMessagesCollection.Find(_ => true).Skip(start).Limit(count).ToListAsync();
+        var messages = await chatMessagesCollection.Find(_ => true).Skip(start).Limit(limit).ToListAsync();
 
-        if (messages == null || messages.Count == 0)
+        if (messages == null)
         {
             throw new Exception("No messages found");
         }

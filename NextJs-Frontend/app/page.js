@@ -1,17 +1,20 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
-import FlipMove from 'react-flip-move';
-import { v4 as uuidv4 } from 'uuid';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { TextField, InputAdornment, IconButton, Skeleton } from '@mui/material';
-import { ArrowUpward, AttachFile } from '@mui/icons-material';
+import { useState, useEffect, useRef } from "react";
+import FlipMove from "react-flip-move";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { v4 as uuidv4 } from "uuid";
+import ChatInput from "./components/ChatInput";
+import ChatMessage from "./components/ChatMessage";
 
 export default function Home() {
-  const [messageField, setMessageField] = useState('');
+  const [messageField, setMessageField] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [animateNewMessage, setAnimateNewMessage] = useState(true);
   const scrollableDivRef = useRef(null);
+
+  const [messageOffset, setMessageOffset] = useState(0);
+
   const username = "markus";
 
   useEffect(() => {
@@ -26,42 +29,39 @@ export default function Home() {
     const newMessage = {
       id: uuidv4(),
       timeStamp: new Date().toISOString(),
-      username: username,
+      userName: username,
       message: messageField,
     };
     setAnimateNewMessage(true);
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setMessageField('');
+    setMessageField("");
   }
 
-  let messageOffset = 0;
   function fetchMessages(animate = false) {
     if (loading) return; // Prevent multiple loads
     setLoading(true);
     setAnimateNewMessage(animate);
-    console.log("Fetching messages from the backend...");
+    console.log("Fetching messages from the backend. ", messageOffset, messageOffset + 10);
 
-    fetch('http://localhost:5001/api/GetMessagesDesc?start=0&count=100')
+    fetch(`http://localhost:5001/api/GetMessagesDesc?start=${messageOffset}&count=10`)
       .then((response) => response.json())
       .then((data) => {
-        messageOffset += data.data.length;
+        setMessageOffset(prevOffset => prevOffset + 10);
         console.log("Received messages from the backend:", data);
         appendMessages(data.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Failed to fetch messages from the backend:", error);
+        setLoading(false);
       });
-    
-    //setMessages((prevMessages) => [...newMessages, ...prevMessages]);
-
-    setLoading(false);
   }
 
   function appendMessages(data) {
     const newMessages = data.map((message) => ({
       id: message.id,
       timeStamp: message.timeStamp,
-      username: message.username,
+      userName: message.userName,
       message: message.message,
     }));
     setMessages((prevMessages) => [...newMessages, ...prevMessages]);
@@ -69,7 +69,12 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between h-screen">
-      <div ref={scrollableDivRef} id="scrollableDiv" className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse" style={{ minWidth: 700 }}>
+      <div
+        ref={scrollableDivRef}
+        id="scrollableDiv"
+        className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse"
+        style={{ minWidth: 700 }}
+      >
         <InfiniteScroll
           dataLength={messages.length}
           next={() => fetchMessages(false)}
@@ -88,13 +93,7 @@ export default function Home() {
             ))}
           */}
             {messages.map((message) => (
-              <div key={message.id} className="bg-gray-100 m-2 p-3 rounded-lg shadow" style={{ height: 100 }}>
-                <div className="flex justify-between">
-                  <h2 className="text-base font-semibold text-gray-900">{message.username}</h2>
-                  <span className="text-xs text-gray-500">{message.timeStamp}</span>
-                </div>
-                <p className="text-gray-800">{message.message}</p>
-              </div>
+              <ChatMessage key={message.id} message={message} />
             ))}
           </FlipMove>
         </InfiniteScroll>
@@ -105,42 +104,7 @@ export default function Home() {
           {username}
         </h2>
         */}
-        <TextField
-          className="mb-3"
-          variant="outlined"
-          fullWidth
-          multiline
-          maxRows={5}
-          size="medium"
-          value={messageField}
-          onChange={handleMessageFieldChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IconButton>
-                  <AttachFile />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={sendMessage} disabled={messageField === ""} className={`rounded-md p-1 ${messageField ? 'bg-blue-500 hover:bg-blue-700' : 'bg-gray-300'}`}>
-                  <ArrowUpward className="text-white" />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-          sx={{
-            '& fieldset': {
-              border: 2,
-              borderColor: 'gray',
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              borderBottomLeftRadius: 20,
-              borderBottomRightRadius: 20,
-            },
-          }}
-        />
+        <ChatInput messageField={messageField} handleMessageFieldChange={handleMessageFieldChange} sendMessage={sendMessage} />
       </div>
     </main>
   );

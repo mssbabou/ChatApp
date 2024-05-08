@@ -34,7 +34,7 @@ public class ChatRestApi : Controller
 
     #region Methods
     [HttpGet("GetMessagesDesc")]
-    public async Task<IActionResult> GetLastMessages(int start = 0, int count = 100)
+    public async Task<IActionResult> GetLastMessages(int start = 0, int count = 10)
     {
         try
         {
