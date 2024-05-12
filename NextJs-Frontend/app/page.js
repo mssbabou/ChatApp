@@ -1,110 +1,171 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import FlipMove from "react-flip-move";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { v4 as uuidv4 } from "uuid";
 import ChatInput from "./components/ChatInput";
 import ChatMessage from "./components/ChatMessage";
 
+import { XEmbed, YouTubeEmbed } from "react-social-media-embed";
+
 export default function Home() {
   const [messageField, setMessageField] = useState("");
+  const [oldestMessage, setOldestMessage] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [animateNewMessage, setAnimateNewMessage] = useState(true);
-  const scrollableDivRef = useRef(null);
+  const [messageCount, setMessageCount] = useState(0);
+  const [animateMessage, setAnimateMessage] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
   const [messageOffset, setMessageOffset] = useState(0);
+  const initialized = useRef(false);  // Ref to track the initial load
 
-  const username = "markus";
+  const [user, setUser] = useState(null);
+
+  useEffect(() =>{
+    if (!initialized.current) {
+      requestUser();
+      fetchOldMessages(20);
+      initialized.current = true;
+    }
+  }, []);
 
   useEffect(() => {
-    fetchMessages(false); // Fetch without animation on mount
-  }, []);
+    setMessageCount(messages.length);
+  }, [messages]);
 
   const handleMessageFieldChange = (event) => {
     setMessageField(event.target.value);
   };
 
-  function sendMessage() {
-    const newMessage = {
-      id: uuidv4(),
-      timeStamp: new Date().toISOString(),
-      userName: username,
-      message: messageField,
-    };
-    setAnimateNewMessage(true);
+  async function requestUser() {
+    try {
+      const response = await fetch("http://localhost:5001/api/RequestUser");
+      const data = await response.json();
+
+      if(data == null || !data.status) throw new Error("Failed to fetch user from the backend.");
+
+      setUser(data.data);
+
+      console.log("User:", data.data);
+    }
+    catch (error) {
+      console.error("Failed to fetch user from the backend:", error);
+    }
+  }
+
+  async function sendMessage() {
+    setAnimateMessage(true);
+    const response = await fetch("http://localhost:5001/api/AddMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": user.privateUserId
+      },
+      body: JSON.stringify(messageField),
+    });
+    const data = await response.json();
+
+    if(data == null || !data.status) throw new Error("Failed to send message to the backend.");
+
+    console.log("Message sent to the backend:", data);
+
+    const newMessage = data.data;
+
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageField("");
   }
 
-  function fetchMessages(animate = false) {
-    if (loading) return; // Prevent multiple loads
-    setLoading(true);
-    setAnimateNewMessage(animate);
-    console.log("Fetching messages from the backend. ", messageOffset, messageOffset + 10);
+  async function fetchOldMessages(count = 10, animate = false) {
+    setAnimateMessage(animate);
+    console.log("Fetching messages from the backend.", messageOffset, messageOffset + count);
 
-    fetch(`http://localhost:5001/api/GetMessagesDesc?start=${messageOffset}&count=10`)
-      .then((response) => response.json())
-      .then((data) => {
-        setMessageOffset(prevOffset => prevOffset + 10);
-        console.log("Received messages from the backend:", data);
-        appendMessages(data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch messages from the backend:", error);
-        setLoading(false);
-      });
+    try {
+      const response = await fetch(`http://localhost:5001/api/GetMessagesDesc?start=${messageOffset}&count=${count}`);
+      const data = await response.json();
+
+      if(data == null || !data.status) throw new Error("Failed to fetch messages from the backend.");
+
+      setMessageOffset(prevOffset => prevOffset + data.data.length);
+      console.log("Received messages from the backend:", data);
+      appendOldMessages(data.data, messageOffset); 
+
+      if (data.data.length == 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setOldestMessage(data.data[0].id);
+    } catch (error) {
+      console.error("Failed to fetch messages from the backend:", error);
+    }
   }
 
-  function appendMessages(data) {
+  async function fetchMessagesBehind(count = 10) {
+    setAnimateMessage(false);
+    console.log("Fetching messages from the backend.", messageOffset, messageOffset + count);
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/GetMessagesBehind?id=${oldestMessage}&count=${count}`);
+      const data = await response.json();
+
+      if(data == null || !data.status) throw new Error("Failed to fetch messages from the backend.");
+
+      setMessageOffset(prevOffset => prevOffset + data.data.length);
+      console.log("Received messages from the backend:", data);
+      appendOldMessages(data.data, messageOffset); 
+
+      if (data.data.length == 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setOldestMessage(data.data[0].id);
+    } catch (error) {
+      console.error("Failed to fetch messages from the backend:", error);
+    }
+  }
+
+  function appendMessage(data) {
+    const newMessage = {
+      id: data.id,
+      timeStamp: data.timeStamp,
+      userName: data.userName,
+      message: data.message,
+    };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  }
+
+  function appendOldMessages(data) {
     const newMessages = data.map((message) => ({
       id: message.id,
       timeStamp: message.timeStamp,
       userName: message.userName,
       message: message.message,
     }));
+
     setMessages((prevMessages) => [...newMessages, ...prevMessages]);
   }
 
   return (
     <main className="flex flex-col items-center justify-between h-screen">
-      <div
-        ref={scrollableDivRef}
-        id="scrollableDiv"
-        className="flex-grow overflow-auto mt-3 mb-3 rounded-xl border-2 border-gray-200 flex flex-col-reverse"
-        style={{ minWidth: 700 }}
-      >
-        <InfiniteScroll
-          dataLength={messages.length}
-          next={() => fetchMessages(false)}
-          inverse={true}
-          hasMore={true}
-          scrollableTarget="scrollableDiv"
-        >
-          <FlipMove duration={250} disableAllAnimations={!animateNewMessage}>
-            {/*
-            {loading && Array(10).fill().map((_, index) => (
-              <div key={uuidv4()} className="bg-gray-100 m-2 p-3 rounded-lg shadow" style={{ height: 100 }}>
-                <Skeleton variant="text" width={140} height={20} />
-                <Skeleton variant="text" width={60} height={20} />
-                <Skeleton variant="text" width="100%" height={40} />
-              </div>
-            ))}
-          */}
+      <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 800, width: '100%' }}>
+        {/*
+        <YouTubeEmbed maxWidth={400} url="https://www.youtube.com/watch?v=I6BmakfJCBc" />
+        <XEmbed url="https://twitter.com/SpaceX/status/1732824684683784516" />
+        <img width={400} src="http://localhost:5001/attachments/d4345296-b628-4bc9-b670-3e3a613f7fb9_image.webp" />
+        */}        
+
+        <InfiniteScroll dataLength={messageCount} next={fetchMessagesBehind} hasMore={hasMore} inverse={true} scrollableTarget="scrollableDiv">
+          <FlipMove duration={175} disableAllAnimations={!animateMessage}>
             {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
+              <ChatMessage key={message.timeStamp} message={message} />
             ))}
           </FlipMove>
         </InfiniteScroll>
       </div>
-      <div className="flex flex-col" style={{ minWidth: 700 }}>
-        {/*
-        <h2 className="ml-auto text-base font-semibold text-gray-900 bg-gray-100 px-4 py-1 border-2 border-gray-200 rounded-t-lg">
-          {username}
-        </h2>
-        */}
-        <ChatInput messageField={messageField} handleMessageFieldChange={handleMessageFieldChange} sendMessage={sendMessage} />
+      <div className="flex flex-col" style={{ maxWidth: 800, width: '100%' }}>
+        <ChatInput handleMessageFieldChange={handleMessageFieldChange} sendMessage={sendMessage} messageField={messageField}/>
       </div>
     </main>
   );

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Bson;
 
 public class NotificationService(IHubContext<ChatHub> chatHubContext)
 {
@@ -9,7 +10,7 @@ public class NotificationService(IHubContext<ChatHub> chatHubContext)
     #endregion
 
     #region Methods
-    public async Task NotifyClients(string id)
+    public async Task NotifyClients(ObjectId id)
     {
         await chatHubContext.Clients.All.SendAsync(NotifyMessageMethod, id);
     }

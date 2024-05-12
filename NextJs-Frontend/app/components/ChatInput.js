@@ -4,7 +4,7 @@ import { ArrowUpward, AttachFile } from "@mui/icons-material";
 export default function ChatInput({ messageField, handleMessageFieldChange, sendMessage }) {
   return (
     <TextField
-    className="mb-3"
+    className="mb-2"
     variant="outlined"
     fullWidth
     multiline
@@ -22,7 +22,11 @@ export default function ChatInput({ messageField, handleMessageFieldChange, send
       ),
       endAdornment: (
         <InputAdornment position="end">
-          <IconButton onClick={sendMessage} disabled={messageField === ""} className={`rounded-md p-1 ${messageField ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-300"}`}>
+          <IconButton 
+            onClick={sendMessage}
+            disableTouchRipple={messageField == ""}  
+            className={`rounded-md p-1 ${messageField ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-300"}`}>
+
             <ArrowUpward className="text-white" />
           </IconButton>
         </InputAdornment>

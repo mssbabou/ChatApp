@@ -1,45 +1,55 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if(builder.Environment.IsDevelopment())
+#region Development Configuration
+// Configure CORS only for development environment
+if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("LocalCorsPolicy", policy =>
         {
-            policy.WithOrigins("http://localhost:3000") // Allow only the development frontend origin
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            policy.WithOrigins("http://localhost:3000") // Allow only the local development frontend origin
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
         });
     });
 }
+#endregion
 
+#region Service Configuration
+// Dependency injections for services
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "ApiKey";
-    options.DefaultChallengeScheme = "ApiKey";
-}).AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
-
 builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
 builder.Services.AddScoped<FileStorage>();
+#endregion
+
+#region Authentication
+// Set up the API authentication using a custom API key scheme
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "ApiKey";
+    options.DefaultChallengeScheme = "ApiKey";
+}).AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
+#endregion
+
+#region Controllers and SignalR
+// Enable controllers and SignalR for API and real-time communication
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+#endregion
 
-// Register the Swagger generator
+#region Swagger Configuration
+// Swagger/OpenAPI configuration for API documentation and testing
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChatApp API", Version = "v1" });
-
-    // Define the BearerAuth scheme
     c.AddSecurityDefinition("BearerAuth", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
@@ -47,8 +57,6 @@ builder.Services.AddSwaggerGen(c =>
         BearerFormat = "JWT",
         Description = "Input your Bearer token in this format - Bearer {your token here}"
     });
-
-    // Apply the BearerAuth scheme globally to all operations
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -64,56 +72,57 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+#endregion
 
 var app = builder.Build();
 
-// Now that the WebApplication instance is created, configure the HTTP request pipeline.
+#region Middleware Configuration
+// Configure middleware and HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}else
+    app.UseExceptionHandler("/Error"); // Use custom error handler in production
+    app.UseHsts(); // HTTP Strict Transport Security in production
+}
+else
 {
-    app.UseCors("LocalCorsPolicy");
+    app.UseCors("LocalCorsPolicy"); // Apply CORS policy in development
 }
 
-app.UseDefaultFiles();
+// Static files configuration
 var attachmentsPath = Environment.GetEnvironmentVariable("FILESTORAGE_PATH") ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 app.UseStaticFiles(new StaticFileOptions
 {
     ServeUnknownFileTypes = true,
     FileProvider = new PhysicalFileProvider(attachmentsPath),
 });
+app.UseDefaultFiles();
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Enable middleware to serve generated Swagger as a JSON endpoint.
-// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-// specifying the Swagger JSON endpoint.
+// Swagger middleware for serving the API documentation
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatApp Api V1");
 });
+#endregion
 
-// Map the SignalR Hub
+#region Endpoint Mapping
+// Map endpoints
 app.MapHub<ChatHub>("/chathub");
-
-// Map the REST API
 app.MapControllers();
+#endregion
 
-// Test MongoDB connection on separate thread
-Task testMongoDBConnection = Task.Run(async() =>
+#region MongoDB Connection Test
+// Test MongoDB connection asynchronously on a separate thread
+Task testMongoDBConnection = Task.Run(async () =>
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<MongoDBContext>();
     await dbContext.TestConnectionAsync();
 });
-
-var scope = app.Services.CreateScope();
-var chatDatabaseService = scope.ServiceProvider.GetRequiredService<ChatDatabaseService>();
+#endregion
 
 app.Run();

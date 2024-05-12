@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+      {
+        "name": "Full Stack",
+        "configurations": ["Launch .NET Core Backend", "Launch Next.js Frontend"]
+      }
+    ],
+    "configurations": [
+      {
+        "name": "Launch .NET Core Backend",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/DotNet-Backend/bin/Debug/net8.0/ChatApp.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/DotNet-Backend",
+        "stopAtEntry": false,
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "sourceFileMap": {
+          "/Views": "${workspaceFolder}/Views"
+        },
+        "console": "internalConsole"
+      },
+      {
+        "name": "Launch Next.js Frontend",
+        "type": "pwa-node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/NextJs-Frontend",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": ["run", "dev"],
+        "console": "integratedTerminal"
+      }
+    ]
+  }

@@ -21,6 +21,7 @@
     "react-dom": "^18",
     "react-flip-move": "^3.0.5",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-social-media-embed": "^2.5.13",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

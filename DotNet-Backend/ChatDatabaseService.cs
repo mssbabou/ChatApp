@@ -21,14 +21,19 @@ public class ChatDatabaseService
         chatMessagesCollection = dbContext.GetCollection<ChatMessage>(ChatMessagesCollectionName);
         userCollection = dbContext.GetCollection<User>(UsersCollectionName);
 
-        userCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.Username)));
-        userCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PublicUserId)));
-        userCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PrivateUserId)));
+        chatMessagesCollection.Indexes.CreateOne(new CreateIndexModel<ChatMessage>(Builders<ChatMessage>.IndexKeys.Descending(m => m.TimeStamp)));
+        
+        userCollection.Indexes.CreateMany(
+        [
+            new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.Username)),
+            new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PublicUserId)),
+            new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PrivateUserId))
+        ]);
     }
     #endregion
 
     #region Methods
-    public async Task<ChatMessage> GetMessageAsync(string id)
+    public async Task<ChatMessage> GetMessageAsync(ObjectId id)
     {
         var message = await chatMessagesCollection.Find(m => m.Id == id).FirstOrDefaultAsync();
         if (message == null)
@@ -52,28 +57,30 @@ public class ChatDatabaseService
         }
     }
 
-    public async Task<List<ChatMessage>> GetMessagesDescAsync(int start, int limit)
+    public async Task<List<ChatMessage>> GetMessagesDescAsync(int skip, int limit)
     {
-        var messages = await chatMessagesCollection.Find(_ => true).Skip(start).Limit(limit).ToListAsync();
+        var messages = await chatMessagesCollection.Find(_ => true).SortByDescending(m => m.Id).Skip(skip).Limit(limit).ToListAsync();
 
         if (messages == null)
         {
             throw new Exception("No messages found");
         }
 
+        messages.Reverse();
+
         return messages;
     }
 
-    public async Task<List<ChatMessage>> GetMessagesBehindAsync(string messageId, int count)
+    public async Task<List<ChatMessage>> GetMessagesBehindAsync(string id, int limit)
     {
-        var message = await GetMessageAsync(messageId);
+        var messages = await chatMessagesCollection.Find(m => m.Id < new ObjectId(id)).SortByDescending(m => m.Id).Limit(limit).ToListAsync();
 
-        var messages = await chatMessagesCollection.Find(m => int.Parse(m.Id) < int.Parse(message.Id)).SortByDescending(m => m.Id).Limit(count).ToListAsync();
-
-        if (messages == null || messages.Count == 0)
+        if (messages == null)
         {
             throw new Exception("No messages found");
         }
+
+        messages.Reverse();
 
         return messages;
     }

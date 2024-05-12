@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+using MongoDB.Bson;
 
 [Route("api")]
 public class ChatRestApi : Controller
@@ -33,13 +32,33 @@ public class ChatRestApi : Controller
     #endregion
 
     #region Methods
-    [HttpGet("GetMessagesDesc")]
-    public async Task<IActionResult> GetLastMessages(int start = 0, int count = 10)
+    [HttpGet("GetMessagesBehind")]
+    public async Task<IActionResult> GetMessagesBehind(string id, int count = 10)
     {
         try
         {
+            const int maxCount = 100;
+            if (count > maxCount) count = maxCount;
+
+            var messages = await chatDatabaseService.GetMessagesBehindAsync(id, count);
+            return Ok(new ChatRestApiResponse<List<PublicChatMessageView>> { Data = messages.Select(m => new PublicChatMessageView(m)).ToList() });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
+    }
+
+    [HttpGet("GetMessagesDesc")]
+    public async Task<IActionResult> GetMessagesDesc(int start = 0, int count = 10)
+    {
+        try
+        {
+            const int maxCount = 100;
+            if (count > maxCount) count = maxCount;
+
             var messages = await chatDatabaseService.GetMessagesDescAsync(start, count);
-            return Ok(new ChatRestApiResponse<List<ChatMessage>> { Data = messages });
+            return Ok(new ChatRestApiResponse<List<PublicChatMessageView>> { Data = messages.Select(m => new PublicChatMessageView(m)).ToList() });
         }
         catch (Exception ex)
         {
@@ -53,8 +72,8 @@ public class ChatRestApi : Controller
     {
         try
         {
-            ChatMessage message = await chatDatabaseService.GetMessageAsync(id);
-            return Ok(new ChatRestApiResponse<ChatMessage> { Data = message });
+            ChatMessage message = await chatDatabaseService.GetMessageAsync(new ObjectId(id));
+            return Ok(new ChatRestApiResponse<PublicChatMessageView> { Data = new PublicChatMessageView(message) });
         }
         catch (Exception ex)
         {
@@ -76,7 +95,7 @@ public class ChatRestApi : Controller
 
             await notificationService.NotifyClients(dbMessage.Id);
 
-            return Ok(new ChatRestApiResponse<ChatMessage> { Data = dbMessage });
+            return Ok(new ChatRestApiResponse<PublicChatMessageView> { Data = new PublicChatMessageView(dbMessage) });
         }
         catch (Exception ex)
         {
@@ -89,7 +108,7 @@ public class ChatRestApi : Controller
     {
         try
         {
-            int fileSizeLimit = 5 * 1024 * 1024; // 10 MB
+            int fileSizeLimit = 5 * 1024 * 1024; // 5 MB
             if (file == null || file.Length == 0) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "" });
             if (file.Length > fileSizeLimit) return StatusCode(400, new ChatRestApiResponse<string> { Status = false, StatusMessage = "File Size limit exceeded" });
 

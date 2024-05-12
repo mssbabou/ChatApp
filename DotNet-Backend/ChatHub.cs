@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 public class ChatHub(ChatDatabaseService chatDatabaseService, IApiKeyService apiKeyService) : Hub
