@@ -17,4 +17,6 @@ const ChatMessage = React.forwardRef(({ message }, ref) => {
   );
 });
 
+ChatMessage.displayName = "ChatMessage";
+
 export default ChatMessage;
