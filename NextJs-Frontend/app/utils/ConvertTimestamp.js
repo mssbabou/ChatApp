@@ -1,4 +1,4 @@
-export function convertTimestamp(timestamp) {
+export default function ConvertTimestamp(timestamp) {
     if (timestamp == null) return "";
 
     const date = new Date(timestamp);

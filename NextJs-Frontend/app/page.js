@@ -151,11 +151,9 @@ export default function Home() {
     <main className="flex flex-col items-center justify-between h-screen">
       <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 800, width: '100%' }}>
         {/*
-        <YouTubeEmbed maxWidth={400} url="https://www.youtube.com/watch?v=I6BmakfJCBc" />
-        <XEmbed url="https://twitter.com/SpaceX/status/1732824684683784516" />
-        <img width={400} src="http://localhost:5001/attachments/d4345296-b628-4bc9-b670-3e3a613f7fb9_image.webp" />
-        */}        
-
+        <YouTubeEmbed url="https://www.youtube.com/watch?v=I6BmakfJCBc" />
+        <XEmbed url="https://twitter.com/SpaceX/status/1732824684683784516" />    
+        */}  
         <InfiniteScroll dataLength={messageCount} next={fetchMessagesBehind} hasMore={hasMore} inverse={true} scrollableTarget="scrollableDiv">
           <FlipMove duration={175} disableAllAnimations={!animateMessage}>
             {messages.map((message) => (
