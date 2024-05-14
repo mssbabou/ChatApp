@@ -1,18 +1,34 @@
 import React from 'react';
 import ConvertTimestamp from '../utils/ConvertTimestamp';
 import Linkify from 'react-linkify';
-import linkify from 'linkifyjs';
-import EmbeddedLink from './EmbeddedLink';
+import EmbeddedLink, { IsMedia } from './EmbeddedLink';
+
+let MediaLinks = {};
 
 const ChatMessage = React.forwardRef(({ message }, ref) => {
   const [links, setLinks] = React.useState([]);
 
   React.useEffect(() => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const matches = message.message.match(urlRegex);
+    let matches = message.message.match(urlRegex);
     if (matches) {
-      setLinks(matches);
-      console.log(matches);
+      (async () => {
+        for (const link of matches) {
+          if (MediaLinks[link] === true) {
+            message.message = message.message.replace(link, '');
+          } else if (MediaLinks[link] === undefined) {
+            let isMedia = await IsMedia(link);
+            if (isMedia) {
+              message.message = message.message.replace(link, '');
+            } else {
+              matches = matches.filter((item) => item !== link);
+            }
+            MediaLinks[link] = isMedia;
+          }
+        }
+        console.log(MediaLinks);
+        setLinks([...new Set(matches)]);
+      })();
     }
   }, [message.message]);
 
@@ -36,7 +52,7 @@ const ChatMessage = React.forwardRef(({ message }, ref) => {
         <p className="text-gray-800 break-all">{message.message}</p>
       </Linkify>
       {links.map((link, index) => (
-        <EmbeddedLink key={index} link={link} />
+        <img key={index} width={400} src={link} alt="Attachment" />
       ))}
     </div>
   );

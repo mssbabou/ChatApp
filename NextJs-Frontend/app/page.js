@@ -5,6 +5,7 @@ import FlipMove from "react-flip-move";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ChatInput from "./components/ChatInput";
 import ChatMessage from "./components/ChatMessage";
+import * as signalR from "@microsoft/signalr";
 
 import { XEmbed, YouTubeEmbed } from "react-social-media-embed";
 
@@ -21,10 +22,11 @@ export default function Home() {
 
   const [user, setUser] = useState(null);
 
+  let connection = null;
+
   useEffect(() =>{
     if (!initialized.current) {
-      requestUser();
-      fetchOldMessages(20);
+      Initialize();
       initialized.current = true;
     }
   }, []);
@@ -33,9 +35,39 @@ export default function Home() {
     setMessageCount(messages.length);
   }, [messages]);
 
+
+
   const handleMessageFieldChange = (event) => {
     setMessageField(event.target.value);
   };
+
+  async function Initialize() {
+    const userData = await requestUser();
+    await fetchOldMessages(20);
+    await setupChatHubConnection(userData.privateUserId);
+  }
+
+  async function setupChatHubConnection(apiKey) {
+    connection = new signalR.HubConnectionBuilder()
+    .withUrl("localhost:5001/chathub", { accessTokenFactory: () => apiKey })
+    .build();
+
+    try {
+        await connection.start();
+
+        connection.on("NotifyMessage", async (id) => {
+          try {
+              console.log("Received message notification:", id);
+              await fetchMessage(id);
+          } catch (err) {
+              console.error("Error receiving message:", err);
+          }
+        }
+      );
+    } catch (err) {
+        console.error("Error starting connection:", err);
+    }
+  }
 
   async function requestUser() {
     try {
@@ -46,14 +78,17 @@ export default function Home() {
 
       setUser(data.data);
 
-      console.log("User:", data.data);
+      return data.data;
     }
     catch (error) {
       console.error("Failed to fetch user from the backend:", error);
+      return null;
     }
   }
 
   async function sendMessage() {
+    if (!messageField) return;
+
     setAnimateMessage(true);
     const response = await fetch("http://localhost:5001/api/AddMessage", {
       method: "POST",
@@ -73,6 +108,24 @@ export default function Home() {
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageField("");
+  }
+
+  async function fetchMessage(id, animate = true) {
+    setAnimateMessage(animate);
+    console.log("Fetching message from the backend:", id);
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/GetMessage?id=${id}`);
+      const data = await response.json();
+
+      if(data == null || !data.status) throw new Error("Failed to fetch message from the backend.");
+
+      const newMessage = data.data;
+
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    } catch (error) {
+      console.error("Failed to fetch message from the backend:", error);
+    }
   }
 
   async function fetchOldMessages(count = 10, animate = false) {
