@@ -3,11 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import FlipMove from "react-flip-move";
 import InfiniteScroll from "react-infinite-scroll-component";
-import ChatInput from "../components/ChatInput";
-import ChatMessage from "../components/ChatMessage";
 import * as signalR from "@microsoft/signalr";
 
-import { XEmbed, YouTubeEmbed } from "react-social-media-embed";
+import ChatInput from "./components/ChatInput";
+import ChatMessage from "./components/ChatMessage";
 
 export default function Home() {
   const [messageField, setMessageField] = useState("");
