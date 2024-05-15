@@ -1,5 +1,7 @@
 services:
   ChatAppNextJsFrontend:
+    depends_on:
+      - ChatAppDotNetBackend
     image: ghcr.io/mssbabou/chatapp/nextjs-frontend:latest
     ports:
       - "80:80"
