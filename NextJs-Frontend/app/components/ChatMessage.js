@@ -28,7 +28,6 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
             MediaLinks[link] = isMedia;
           }
         }
-        console.log(MediaLinks);
         setLinks([...new Set(matches)]);
       })();
     }

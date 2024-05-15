@@ -35,6 +35,7 @@ EXPOSE 80
 
 # Set the backend URL as an environment variable
 ENV BACKEND_URL=ChatAppDotNetBackend:5001
+ENV DOCKER_ENV=true
 
 # Start Nginx when the container has provisioned
 CMD ["nginx", "-g", "daemon off;"]

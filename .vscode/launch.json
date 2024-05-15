@@ -30,7 +30,7 @@
       },
       {
         "name": "Launch Next.js Frontend",
-        "type": "pwa-node",
+        "type": "node",
         "request": "launch",
         "cwd": "${workspaceFolder}/NextJs-Frontend",
         "runtimeExecutable": "npm",

@@ -28,7 +28,6 @@ export default function EmbeddedLink({ link }) {
 export async function IsMedia(link){
     let isMedia = false;
     try {
-        
         if (link.includes('youtube')) return false;
     
         const response = await fetch(link);

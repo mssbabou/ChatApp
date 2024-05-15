@@ -17,7 +17,7 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
 
   const [messageOffset, setMessageOffset] = useState(0);
-  const initialized = useRef(false);  // Ref to track the initial load
+  const initialized = useRef(false);
 
   const userRef = useRef(null);
   const setUser = (data) => {
@@ -25,6 +25,8 @@ export default function Home() {
   };
 
   let connection = null;
+
+  const BackEndEndpoint = process.env.DOCKER_ENV ? "" : "http://localhost:5001";
 
   useEffect(() =>{
     if (!initialized.current) {
@@ -49,7 +51,7 @@ export default function Home() {
 
   async function setupChatHubConnection(apiKey) {
     connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5001/chathub", { accessTokenFactory: () => apiKey })
+    .withUrl(`${BackEndEndpoint}/chathub`, { accessTokenFactory: () => apiKey })
     .build();
 
     try {
@@ -72,7 +74,7 @@ export default function Home() {
 
   async function requestUser() {
     try {
-      const response = await fetch("http://localhost:5001/api/RequestUser");
+      const response = await fetch(`${BackEndEndpoint}/api/RequestUser`);
       const data = await response.json();
 
       if(data == null || !data.status) throw new Error("Failed to fetch user from the backend.");
@@ -91,7 +93,7 @@ export default function Home() {
     if (!messageField) return;
 
     setAnimateMessage(true);
-    const response = await fetch("http://localhost:5001/api/AddMessage", {
+    const response = await fetch(`${BackEndEndpoint}/api/AddMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +115,7 @@ export default function Home() {
     console.log("Fetching message from the backend:", id);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/GetMessage?id=${id}`, {
+      const response = await fetch(`${BackEndEndpoint}/api/GetMessage?id=${id}`, {
         headers: { "X-Api-Key": apiKey }
       });
       const data = await response.json();
@@ -133,7 +135,7 @@ export default function Home() {
     console.log("Fetching messages from the backend.", messageOffset, messageOffset + count);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/GetMessagesDesc?start=${messageOffset}&count=${count}`);
+      const response = await fetch(`${BackEndEndpoint}/api/GetMessagesDesc?start=${messageOffset}&count=${count}`);
       const data = await response.json();
 
       if(data == null || !data.status) throw new Error("Failed to fetch messages from the backend.");
@@ -158,7 +160,7 @@ export default function Home() {
     console.log("Fetching messages from the backend.", messageOffset, messageOffset + count);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/GetMessagesBehind?id=${oldestMessage}&count=${count}`);
+      const response = await fetch(`${BackEndEndpoint}/api/GetMessagesBehind?id=${oldestMessage}&count=${count}`);
       const data = await response.json();
 
       if(data == null || !data.status) throw new Error("Failed to fetch messages from the backend.");
