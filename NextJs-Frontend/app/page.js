@@ -26,7 +26,7 @@ export default function Home() {
 
   let connection = null;
 
-  const BackEndEndpoint = process.env.DOCKER_ENV ? "" : "http://localhost:5001";
+  const BackEndEndpoint = "";
 
   useEffect(() =>{
     if (!initialized.current) {

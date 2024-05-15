@@ -1,5 +1,7 @@
 services:
   ChatAppNextJsFrontend:
+    depends_on:
+      - ChatAppDotNetBackend
     build: ./NextJs-Frontend/
     image: chatappreactfrontend
     ports:
