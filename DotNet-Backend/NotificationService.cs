@@ -12,7 +12,7 @@ public class NotificationService(IHubContext<ChatHub> chatHubContext)
     #region Methods
     public async Task NotifyClients(ObjectId id)
     {
-        await chatHubContext.Clients.All.SendAsync(NotifyMessageMethod, id);
+        await chatHubContext.Clients.All.SendAsync(NotifyMessageMethod, id.ToString());
     }
     #endregion
 }

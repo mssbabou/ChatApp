@@ -13,6 +13,7 @@ if (builder.Environment.IsDevelopment())
         options.AddPolicy("LocalCorsPolicy", policy =>
         {
             policy.WithOrigins("http://localhost:3000") // Allow only the local development frontend origin
+                  .AllowCredentials()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

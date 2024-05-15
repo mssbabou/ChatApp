@@ -19,7 +19,10 @@ export default function Home() {
   const [messageOffset, setMessageOffset] = useState(0);
   const initialized = useRef(false);  // Ref to track the initial load
 
-  const [user, setUser] = useState(null);
+  const userRef = useRef(null);
+  const setUser = (data) => {
+    userRef.current = data;
+  };
 
   let connection = null;
 
@@ -34,8 +37,6 @@ export default function Home() {
     setMessageCount(messages.length);
   }, [messages]);
 
-
-
   const handleMessageFieldChange = (event) => {
     setMessageField(event.target.value);
   };
@@ -43,12 +44,12 @@ export default function Home() {
   async function Initialize() {
     const userData = await requestUser();
     await fetchOldMessages(20);
-    await setupChatHubConnection(userData.privateUserId);
+    await setupChatHubConnection(userRef.current.privateUserId);
   }
 
   async function setupChatHubConnection(apiKey) {
     connection = new signalR.HubConnectionBuilder()
-    .withUrl("localhost:5001/chathub", { accessTokenFactory: () => apiKey })
+    .withUrl("http://localhost:5001/chathub", { accessTokenFactory: () => apiKey })
     .build();
 
     try {
@@ -56,8 +57,9 @@ export default function Home() {
 
         connection.on("NotifyMessage", async (id) => {
           try {
+              console.log("THE SHITTY USER", userRef.current);
               console.log("Received message notification:", id);
-              await fetchMessage(id);
+              await fetchMessage(id, apiKey);
           } catch (err) {
               console.error("Error receiving message:", err);
           }
@@ -93,7 +95,7 @@ export default function Home() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Api-Key": user.privateUserId
+        "X-Api-Key": userRef.current.privateUserId
       },
       body: JSON.stringify(messageField),
     });
@@ -103,18 +105,17 @@ export default function Home() {
 
     console.log("Message sent to the backend:", data);
 
-    const newMessage = data.data;
-
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageField("");
   }
 
-  async function fetchMessage(id, animate = true) {
+  async function fetchMessage(id, apiKey, animate = true) {
     setAnimateMessage(animate);
     console.log("Fetching message from the backend:", id);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/GetMessage?id=${id}`);
+      const response = await fetch(`http://localhost:5001/api/GetMessage?id=${id}`, {
+        headers: { "X-Api-Key": apiKey }
+      });
       const data = await response.json();
 
       if(data == null || !data.status) throw new Error("Failed to fetch message from the backend.");
@@ -209,7 +210,7 @@ export default function Home() {
         <InfiniteScroll dataLength={messageCount} next={fetchMessagesBehind} hasMore={hasMore} inverse={true} scrollableTarget="scrollableDiv">
           <FlipMove duration={175} disableAllAnimations={!animateMessage}>
             {messages.map((message) => (
-              <ChatMessage key={message.timeStamp} message={message} />
+              <ChatMessage key={message.timeStamp} isAuthor={message.userName == userRef.current.username} message={message} />
             ))}
           </FlipMove>
         </InfiniteScroll>
