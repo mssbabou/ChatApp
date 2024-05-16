@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import FlipMove from "react-flip-move";
 import InfiniteScroll from "react-infinite-scroll-component";
 import * as signalR from "@microsoft/signalr";
 
 import ChatInput from "./components/ChatInput";
 import ChatMessage from "./components/ChatMessage";
+import { useRouter } from "next/router";
 
 export default function Home() {
+
+
   const [messageField, setMessageField] = useState("");
   const [oldestMessage, setOldestMessage] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -26,7 +29,7 @@ export default function Home() {
 
   let connection = null;
 
-  const BackEndEndpoint = "";
+  const BackEndEndpoint = "http://localhost:5001"
 
   useEffect(() =>{
     if (!initialized.current) {
@@ -73,8 +76,35 @@ export default function Home() {
   }
 
   async function requestUser() {
+    const privateUserId = localStorage.getItem("privateUserId");
+    console.log("Private User ID:", privateUserId);
+    if (privateUserId) {
+      const user = await fetchUser(privateUserId  );
+      console.log("User from local storage:", user);
+      if (user) return user;
+    }
+
     try {
       const response = await fetch(`${BackEndEndpoint}/api/RequestUser`);
+      const data = await response.json();
+
+      if(data == null || !data.status) throw new Error("Failed to fetch user from the backend.");
+
+      setUser(data.data);
+
+      localStorage.setItem("privateUserId", data.data.privateUserId);
+
+      return data.data;
+    }
+    catch (error) {
+      console.error("Failed to fetch user from the backend:", error);
+      return null;
+    }
+  }
+
+  async function fetchUser(privateUserId) {
+    try {
+      const response = await fetch(`${BackEndEndpoint}/api/GetPrivateUser?privateUserId=${privateUserId}`);
       const data = await response.json();
 
       if(data == null || !data.status) throw new Error("Failed to fetch user from the backend.");
@@ -204,11 +234,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between h-screen">
-      <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 800, width: '100%' }}>
-        {/*
-        <YouTubeEmbed url="https://www.youtube.com/watch?v=I6BmakfJCBc" />
-        <XEmbed url="https://twitter.com/SpaceX/status/1732824684683784516" />    
-        */}  
+      <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 800, width: '100%' }}>  
         <InfiniteScroll dataLength={messageCount} next={fetchMessagesBehind} hasMore={hasMore} inverse={true} scrollableTarget="scrollableDiv">
           <FlipMove duration={175} disableAllAnimations={!animateMessage}>
             {messages.map((message) => (
