@@ -1,10 +1,18 @@
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { ArrowUpward, AttachFile } from "@mui/icons-material";
 
-export default function ChatInput({ messageField, handleMessageFieldChange, sendMessage }) {
+export default function ChatInput({ messageField, handleMessageFieldChange, sendMessage, reciever }) {
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  }
+
   return (
     <TextField
     className="mb-2"
+    placeholder={`Message ${reciever}`}
     variant="outlined"
     fullWidth
     multiline
@@ -12,6 +20,7 @@ export default function ChatInput({ messageField, handleMessageFieldChange, send
     size="medium"
     value={messageField}
     onChange={handleMessageFieldChange}
+    onKeyDown={handleKeyDown}
     InputProps={{
       startAdornment: (
         <InputAdornment position="start">
