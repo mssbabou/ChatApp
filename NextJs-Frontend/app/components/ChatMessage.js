@@ -7,6 +7,8 @@ import Image from 'next/image';
 let MediaLinks = {};
 
 const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+
   const [links, setLinks] = React.useState([]);
 
   React.useEffect(() => {
@@ -20,7 +22,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
           if (MediaLinks[link] === true) {
             message.message = message.message.replace(link, '');
           } else if (MediaLinks[link] === undefined) {
-            let isMedia = await IsMedia(link);
+            let isMedia = await IsMedia(isDevelopment ? link : `/proxy/?url=${link}`);
             if (isMedia) {
               message.message = message.message.replace(link, '');
             } else {
@@ -62,7 +64,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
           </p>
         </Linkify>
         {links.map((link, index) => (
-          <img key={index} width={400} height={400} src={`/proxy/?url=${link}`} alt="Attachment"/>
+          <img key={index} width={400} height={400} src={isDevelopment ? link : `/proxy/?url=${link}`} alt="Attachment"/>
         ))}
       </div>
     </div>
