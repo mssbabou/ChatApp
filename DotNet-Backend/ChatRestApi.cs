@@ -10,7 +10,7 @@ public class ChatRestApi : Controller
     private readonly NotificationService notificationService;
     private readonly IApiKeyService apiKeyService;
     private readonly NameGenerator nameGenerator;
-    private readonly FileStorage fileStorage;
+    private readonly LocalFileStorage fileStorage;
     #endregion
 
     #region Constructor
@@ -20,7 +20,7 @@ public class ChatRestApi : Controller
         NotificationService notificationService,
         IApiKeyService apiKeyService, 
         NameGenerator nameGenerator,
-        FileStorage fileStorage
+        LocalFileStorage fileStorage
     )
     {
         this.chatDatabaseService = chatDatabaseService;
@@ -50,14 +50,14 @@ public class ChatRestApi : Controller
     }
 
     [HttpGet("GetMessagesDesc")]
-    public async Task<IActionResult> GetMessagesDesc(int start = 0, int count = 10)
+    public async Task<IActionResult> GetMessagesDesc(string chatId = "", int start = 0, int count = 10)
     {
         try
         {
             const int maxCount = 100;
             if (count > maxCount) count = maxCount;
 
-            var messages = await chatDatabaseService.GetMessagesDescAsync(start, count);
+            var messages = await chatDatabaseService.GetMessagesDescAsync(chatId, start, count);
             return Ok(new ChatRestApiResponse<List<PublicChatMessageView>> { Data = messages.Select(m => new PublicChatMessageView(m)).ToList() });
         }
         catch (Exception ex)
@@ -83,7 +83,7 @@ public class ChatRestApi : Controller
 
     [Authorize]
     [HttpPost("AddMessage")]
-    public async Task<IActionResult> AddMessage([FromBody] string message)
+    public async Task<IActionResult> AddMessage(string chatId, [FromBody] string message)
     {
         try
         {
@@ -91,7 +91,7 @@ public class ChatRestApi : Controller
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             User user = await chatDatabaseService.GetPrivateUserAsync(userId);
-            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserView(user), message));
+            ChatMessage dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserView(user), chatId != null ? chatId : "", message));
 
             await notificationService.NotifyClients(dbMessage.Id);
 

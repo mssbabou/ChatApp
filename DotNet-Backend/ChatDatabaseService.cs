@@ -57,9 +57,9 @@ public class ChatDatabaseService
         }
     }
 
-    public async Task<List<ChatMessage>> GetMessagesDescAsync(int skip, int limit)
+    public async Task<List<ChatMessage>> GetMessagesDescAsync(string  chatId, int skip, int limit)
     {
-        var messages = await chatMessagesCollection.Find(_ => true).SortByDescending(m => m.Id).Skip(skip).Limit(limit).ToListAsync();
+        var messages = await chatMessagesCollection.Find(m => m.ChatId == chatId).SortByDescending(m => m.Id).Skip(skip).Limit(limit).ToListAsync();
 
         if (messages == null)
         {

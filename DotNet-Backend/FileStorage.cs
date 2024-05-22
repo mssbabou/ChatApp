@@ -1,8 +1,8 @@
-public class FileStorage
+public class LocalFileStorage : IFileStorageService
 {
     private readonly string storagePath = "";
 
-    public FileStorage(IConfiguration configuration)
+    public LocalFileStorage(IConfiguration configuration)
     {
         storagePath = Environment.GetEnvironmentVariable("FILESTORAGE_PATH") ?? configuration.GetValue<string>("FileStorage:Path");
     }
