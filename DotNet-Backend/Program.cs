@@ -26,6 +26,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
+builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
 builder.Services.AddScoped<LocalFileStorage>();

@@ -25,7 +25,7 @@ public class ChatHub(ChatDatabaseService chatDatabaseService, IApiKeyService api
         users.TryAdd(Context.ConnectionId, userid);
 
         if (!userAlreadyConnected)
-            await Clients.All.SendAsync("UserConnected", new PublicUserView(user));
+            await Clients.All.SendAsync("UserConnected", new PublicUserDTO(user));
 
         await base.OnConnectedAsync();
     }
@@ -38,7 +38,7 @@ public class ChatHub(ChatDatabaseService chatDatabaseService, IApiKeyService api
         User user = await chatDatabaseService.GetPrivateUserAsync(userid);
 
         if(!userStillConnected)
-            await Clients.All.SendAsync("UserDisconnected", new PublicUserView(user));
+            await Clients.All.SendAsync("UserDisconnected", new PublicUserDTO(user));
 
         await base.OnDisconnectedAsync(exception);
     }
