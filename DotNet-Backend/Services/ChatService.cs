@@ -42,7 +42,7 @@ public class ChatService
     public async Task<ChatMessageDTO> AddMessageAsync(string userId, string chatId, string message)
     {
         var user = await _chatDatabaseService.GetPrivateUserAsync(userId);
-        var dbMessage = await _chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserDTO(user), chatId, message));
+        var dbMessage = await _chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserDTO(user), chatId ?? "", message));
         await _notificationService.NotifyClients(dbMessage.Id);
         return new ChatMessageDTO(dbMessage);
     }
