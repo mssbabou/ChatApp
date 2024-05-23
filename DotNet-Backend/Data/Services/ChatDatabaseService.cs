@@ -73,7 +73,8 @@ public class ChatDatabaseService
 
     public async Task<List<ChatMessage>> GetMessagesBehindAsync(string id, int limit)
     {
-        var messages = await chatMessagesCollection.Find(m => m.Id < new ObjectId(id)).SortByDescending(m => m.Id).Limit(limit).ToListAsync();
+        var message = await GetMessageAsync(new ObjectId(id));
+        var messages = await chatMessagesCollection.Find(m => m.Id < message.Id && m.ChatId == message.ChatId).SortByDescending(m => m.Id).Limit(limit).ToListAsync();
 
         if (messages == null)
         {
