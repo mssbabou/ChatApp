@@ -47,14 +47,17 @@ const useChat = (initialChatId, isDevelopment) => {
     try {
       await connectionRef.current.start();
 
-      connectionRef.current.on("NotifyMessage", async (id) => {
-        try {
-          console.log("Received message notification:", id);
-          await fetchMessage(id, apiKey);
-        } catch (err) {
-          console.error("Error receiving message:", err);
-        }
-      });
+      connectionRef.current.invoke("JoinGroup", initialChatId).then(() => {
+          console.log("Connected to chat:", initialChatId);
+          connectionRef.current.on("NotifyMessage", async (id) => {
+            try {
+              console.log("Received message notification:", id);
+              await fetchMessage(id, apiKey);
+            } catch (err) {
+              console.error("Error receiving message:", err);
+            }
+          });
+        });
     } catch (err) {
       console.error("Error starting connection:", err);
     }
@@ -102,7 +105,7 @@ const useChat = (initialChatId, isDevelopment) => {
     if (!messageField) return;
 
     setAnimateMessage(true);
-    const response = await fetch(`${BackEndEndpoint}/api/AddMessage?chatId=${initialChatId}`, {
+    const response = await fetch(`${BackEndEndpoint}/api/AddMessage?chatId=${initialChatId != null ? initialChatId : ""}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -140,7 +143,7 @@ const useChat = (initialChatId, isDevelopment) => {
     setAnimateMessage(animate);
 
     try {
-      const response = await fetch(`${BackEndEndpoint}/api/GetMessagesDesc?chatid=${chatId}&start=${messageOffset}&count=${count}`);
+      const response = await fetch(`${BackEndEndpoint}/api/GetMessagesDesc?chatid=${initialChatId != null ? initialChatId : ""}&start=${messageOffset}&count=${count}`);
       const data = await response.json();
 
       if (!data || !data.status) throw new Error("Failed to fetch messages from the backend.");

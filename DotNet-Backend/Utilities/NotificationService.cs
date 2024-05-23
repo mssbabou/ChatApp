@@ -10,9 +10,9 @@ public class NotificationService(IHubContext<ChatHub> chatHubContext)
     #endregion
 
     #region Methods
-    public async Task NotifyClients(ObjectId id)
+    public async Task NotifyClients(string group, ObjectId id)
     {
-        await chatHubContext.Clients.All.SendAsync(NotifyMessageMethod, id.ToString());
+        await chatHubContext.Clients.Group(group ?? "").SendAsync(NotifyMessageMethod, id.ToString());
     }
     #endregion
 }

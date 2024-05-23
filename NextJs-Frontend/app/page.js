@@ -25,7 +25,6 @@ const ChatComponent = () => {
     hasMore,
     sendMessage,
     fetchMessagesBehind,
-    setAnimateMessage,
     animateMessage,
     scrollToBottom,
     initialized,

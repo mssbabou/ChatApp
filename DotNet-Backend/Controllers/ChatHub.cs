@@ -10,6 +10,16 @@ public class ChatHub(ChatDatabaseService chatDatabaseService, IApiKeyService api
     private readonly IApiKeyService apiKeyService = apiKeyService;
     #endregion
 
+    public async Task JoinGroup(string group)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, group ?? "");
+    }
+
+    public async Task LeaveGroup(string group)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, group ?? "");
+    }
+
     public override async Task OnConnectedAsync()
     {
         string userid = apiKeyService.GetApiKey(Context.GetHttpContext());
