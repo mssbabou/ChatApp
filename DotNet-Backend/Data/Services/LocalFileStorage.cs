@@ -1,23 +1,21 @@
-public class LocalFileStorage : IFileStorageService
+public class LocalFileStorage : FileStorageService
 {
-    private readonly string storagePath = "";
+    private readonly string storagePath = string.Empty;
 
     public LocalFileStorage(IConfiguration configuration)
     {
-        storagePath = Environment.GetEnvironmentVariable("FILESTORAGE_PATH") ?? configuration.GetValue<string>("FileStorage:Path");
+        storagePath = Environment.GetEnvironmentVariable("FILESTORAGE_PATH") ?? configuration.GetValue<string>("FileStorage:Path")!;
     }
 
-    public async Task<string> SaveFileAsync(IFormFile file)
+    public override async Task<string> SaveFileAsync(IFormFile file)
     {
-        string fileName = $"{Guid.NewGuid()}_{file.FileName}";
-        fileName = fileName.Replace(" ", "_");
-        string filePath = Path.Combine(storagePath, fileName);
+        string filePath = Path.Combine(storagePath, GetNewFileName(file.FileName));
 
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
-        return fileName;
+        return GetNewFileName(file.FileName);
     }
 }

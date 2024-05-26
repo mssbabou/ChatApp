@@ -3,7 +3,6 @@ import * as signalR from "@microsoft/signalr";
 
 const useChat = (initialChatId, isDevelopment) => {
   const [chatId, setChatId] = useState(initialChatId);
-  const [messageField, setMessageField] = useState("");
   const [oldestMessage, setOldestMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageCount, setMessageCount] = useState(0);
@@ -101,8 +100,8 @@ const useChat = (initialChatId, isDevelopment) => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!messageField) return;
+  const sendMessage = async (message) => {
+    if (!message) return false;
 
     setAnimateMessage(true);
     const response = await fetch(`${BackEndEndpoint}/api/AddMessage?chatId=${initialChatId != null ? initialChatId : ""}`, {
@@ -111,14 +110,15 @@ const useChat = (initialChatId, isDevelopment) => {
         "Content-Type": "application/json",
         "X-Api-Key": userRef.current.privateUserId,
       },
-      body: JSON.stringify(messageField),
+      body: JSON.stringify(message),
     });
     const data = await response.json();
 
-    if (!data || !data.status) throw new Error("Failed to send message to the backend.");
+    if (!data || !data.status) return false;
 
     scrollToBottom();
-    setMessageField("");
+
+    return true;
   };
 
   const fetchMessage = async (id, apiKey, animate = true) => {
@@ -205,8 +205,6 @@ const useChat = (initialChatId, isDevelopment) => {
   return {
     chatId,
     setChatId,
-    messageField,
-    setMessageField,
     messages,
     messageCount,
     hasMore,

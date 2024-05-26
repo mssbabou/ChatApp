@@ -1,7 +1,7 @@
 import React from 'react';
 import ConvertTimestamp from '../utils/ConvertTimestamp';
 import Linkify from 'react-linkify';
-import EmbeddedLink, { IsMedia } from './EmbeddedLink';
+import EmbeddedLink, { IsImage } from './EmbeddedLink';
 import Image from 'next/image';
 
 let MediaLinks = {};
@@ -22,7 +22,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
           if (MediaLinks[link] === true) {
             message.message = message.message.replace(link, '');
           } else if (MediaLinks[link] === undefined) {
-            let isMedia = await IsMedia(isDevelopment ? link : `/proxy/?url=${link}`);
+            let isMedia = await IsImage(isDevelopment ? link : `/proxy/?url=${link}`);
             if (isMedia) {
               message.message = message.message.replace(link, '');
             } else {

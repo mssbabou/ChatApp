@@ -22,8 +22,6 @@ const ChatComponent = () => {
   const {
     chatId,
     setChatId,
-    messageField,
-    setMessageField,
     messages,
     messageCount,
     hasMore,
@@ -48,10 +46,6 @@ const ChatComponent = () => {
     }
   }, [messages]);
 
-  const handleMessageFieldChange = (event) => {
-    setMessageField(event.target.value);
-  };
-
   function RedirectToChat() {
     if (initialChatId !== chatId) {
       window.location.href = `/?c=${chatId}`;
@@ -65,62 +59,59 @@ const ChatComponent = () => {
   }
 
   return (
-<main className="flex h-screen">
-  <div className="flex flex-col items-center justify-between h-full bg-gray-500">
-    <Paper component="form" className="m-2" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-      onSubmit={(e) => {
-        e.preventDefault();
-        RedirectToChat();
-      }}
-    >
-      <InputBase 
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Go to Chat"
-        inputProps={{ 'aria-label': 'Go to Chat' }}
-        value={chatId}
-        onChange={(e) => setChatId(e.target.value)}
-      />
-      <IconButton onClick={() => setChatId("")} sx={{ p: '10px' }} aria-label="reset">
-        <CloseIcon fontSize="small" />
-      </IconButton>
-      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-      <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-        <SearchIcon/>
-      </IconButton>
-    </Paper>
-  </div>
-  <div className="flex flex-col items-center justify-between flex-grow h-full">
-    <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 900, width: "100%", height: "100%" }} ref={scrollableDivRef}>
-      <InfiniteScroll
-        scrollThreshold={0.9}
-        dataLength={messageCount}
-        next={fetchMessagesBehind}
-        hasMore={hasMore}
-        inverse={true}
-        scrollableTarget="scrollableDiv"
-      >
-        <FlipMove duration={175} disableAllAnimations={!animateMessage}>
-          {messages.map((message) => (
-            <ChatMessage
-              key={message.timeStamp}
-              isAuthor={message.userName === userRef.current?.username}
-              message={message}
-            />
-          ))}
-        </FlipMove>
-      </InfiniteScroll>
-    </div>
-    <div className="flex flex-col" style={{ maxWidth: 900, width: "100%" }}>
-      <ChatInput
-        handleMessageFieldChange={handleMessageFieldChange}
-        sendMessage={sendMessage}
-        messageField={messageField}
-        reciever={initialChatId ? initialChatId : ""}
-      />
-    </div>
-  </div>
-</main>
-
+    <main className="flex h-screen">
+      <div className="flex flex-col items-center justify-between h-full bg-gray-500">
+        <Paper component="form" className="m-3" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            RedirectToChat();
+          }}
+        >
+          <InputBase 
+            sx={{ ml: 1, flex: 1 }}
+            placeholder="Go to Chat"
+            inputProps={{ 'aria-label': 'Go to Chat' }}
+            value={chatId}
+            onChange={(e) => setChatId(e.target.value)}
+          />
+          <IconButton onClick={() => setChatId("")} sx={{ p: '10px' }} aria-label="reset">
+            <CloseIcon fontSize="small" />
+          </IconButton>
+          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+          <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+            <SearchIcon/>
+          </IconButton>
+        </Paper>
+      </div>
+      <div className="flex flex-col items-center justify-between flex-grow h-full">
+        <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 900, width: "100%", height: "100%" }} ref={scrollableDivRef}>
+          <InfiniteScroll
+            scrollThreshold={0.9}
+            dataLength={messageCount}
+            next={fetchMessagesBehind}
+            hasMore={hasMore}
+            inverse={true}
+            scrollableTarget="scrollableDiv"
+          >
+            <FlipMove duration={175} disableAllAnimations={!animateMessage}>
+              {messages.map((message) => (
+                <ChatMessage
+                  key={message.timeStamp}
+                  isAuthor={message.userName === userRef.current?.username}
+                  message={message}
+                />
+              ))}
+            </FlipMove>
+          </InfiniteScroll>
+        </div>
+        <div className="flex flex-col" style={{ maxWidth: 900, width: "100%" }}>
+          <ChatInput
+            sendMessage={sendMessage}
+            reciever={initialChatId ? initialChatId : ""}
+          />
+        </div>
+      </div>
+    </main>
   );
 };
 

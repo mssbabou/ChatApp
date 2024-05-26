@@ -24,12 +24,12 @@ if (builder.Environment.IsDevelopment())
 #region Service Configuration
 // Dependency injections for services
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+builder.Services.AddScoped<FileStorageService, AzureFileStorage>();
 builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
-builder.Services.AddScoped<LocalFileStorage>();
 #endregion
 
 #region Authentication
@@ -126,5 +126,8 @@ Task testMongoDBConnection = Task.Run(async () =>
     await dbContext.TestConnectionAsync();
 });
 #endregion
+
+using var scope = app.Services.CreateScope();
+var azure = scope.ServiceProvider.GetRequiredService<FileStorageService>() as AzureFileStorage;
 
 app.Run();

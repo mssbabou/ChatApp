@@ -25,18 +25,28 @@ export default function EmbeddedLink({ link }) {
     );
 }
 
-export async function IsMedia(link){
+export async function IsImage(link){
     let isMedia = false;
     try {
         if (link.includes('youtube')) return false;
-    
+
         const response = await fetch(link);
 
         const contentType = response.headers.get('content-type');
+        console.log(`${link}: ${contentType}`);
 
         if (contentType && contentType.startsWith('image')) {
             isMedia = true;
-        }        
+        } else {
+            // Additional check by trying to load the image
+            const blob = await response.blob();
+            isMedia = await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = URL.createObjectURL(blob);
+            });
+        }
     } catch (error) {
         isMedia = false;
     }

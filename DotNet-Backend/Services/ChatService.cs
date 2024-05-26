@@ -4,21 +4,21 @@ public class ChatService
 {
     private readonly ChatDatabaseService chatDatabaseService;
     private readonly NotificationService notificationService;
-    private readonly IApiKeyService _apiKeyService;
-    private readonly NameGenerator _nameGenerator;
-    private readonly LocalFileStorage _fileStorage;
+    private readonly IApiKeyService apiKeyService;
+    private readonly NameGenerator nameGenerator;
+    private readonly FileStorageService fileStorage;
 
     public ChatService(ChatDatabaseService chatDatabaseService, 
                       NotificationService notificationService,
                       IApiKeyService apiKeyService, 
                       NameGenerator nameGenerator,
-                      LocalFileStorage fileStorage)
+                      FileStorageService fileStorage)
     {
         this.chatDatabaseService = chatDatabaseService;
         this.notificationService = notificationService;
-        _apiKeyService = apiKeyService;
-        _nameGenerator = nameGenerator;
-        _fileStorage = fileStorage;
+        this.apiKeyService = apiKeyService;
+        this.nameGenerator = nameGenerator;
+        this.fileStorage = fileStorage;
     }
 
     public async Task<List<ChatMessageDTO>> GetMessagesBehindAsync(string id, int count)
@@ -53,12 +53,12 @@ public class ChatService
         if (file.Length > fileSizeLimit) 
             throw new Exception("File Size limit exceeded");
 
-        return await _fileStorage.SaveFileAsync(file);
+        return await fileStorage.SaveFileAsync(file);
     }
 
     public async Task<PrivateUserDTO> RequestUserAsync()
     {
-        var user = await chatDatabaseService.AddUserAsync(await _nameGenerator.GetRandomUniqueName());
+        var user = await chatDatabaseService.AddUserAsync(await nameGenerator.GetRandomUniqueName());
         return new PrivateUserDTO(user);
     }
 
@@ -76,6 +76,6 @@ public class ChatService
 
     public string GetApiKey(HttpContext context)
     {
-        return _apiKeyService.GetApiKey(context);
+        return apiKeyService.GetApiKey(context);
     }
 }
