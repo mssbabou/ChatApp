@@ -1,12 +1,9 @@
 name: Build and Push DotNet Backend Docker Image
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version tag for the Docker image'
-        required: true
-        default: 'latest'
+  push:
+    branches:
+      - main
 
 jobs:
   build_and_push:
@@ -33,7 +30,7 @@ jobs:
         id: prep
         run: |
           REPO_NAME="${{ github.repository }}"
-          VERSION="${{ github.event.inputs.version }}"
+          VERSION="latest"
           REPO_NAME_LOWER=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]')
           VERSION_LOWER=$(echo $VERSION | tr '[:upper:]' '[:lower:]')
           echo "REPO_NAME_LOWER=${REPO_NAME_LOWER}" >> $GITHUB_ENV
@@ -46,3 +43,6 @@ jobs:
           file: ./DotNet-Backend/Dockerfile
           push: true
           tags: ghcr.io/${{ env.REPO_NAME_LOWER }}/dotnet-backend:${{ env.VERSION_LOWER }}
+          build-args: |
+            AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+            AZURE_STORAGE_CONTAINER_NAME=${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}

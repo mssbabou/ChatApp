@@ -1,12 +1,9 @@
 name: Build and Push Next.js Frontend Docker Image
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version tag for the Docker image'
-        required: true
-        default: 'latest'
+  push:
+    branches:
+      - main
 
 jobs:
   build_and_push:
@@ -33,7 +30,7 @@ jobs:
         id: prep
         run: |
           REPO_NAME="${{ github.repository }}"
-          VERSION="${{ github.event.inputs.version }}"
+          VERSION="latest"
           REPO_NAME_LOWER=$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]')
           VERSION_LOWER=$(echo $VERSION | tr '[:upper:]' '[:lower:]')
           echo "REPO_NAME_LOWER=${REPO_NAME_LOWER}" >> $GITHUB_ENV
