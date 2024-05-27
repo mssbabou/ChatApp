@@ -22,7 +22,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
           if (MediaLinks[link] === true) {
             message.message = message.message.replace(link, '');
           } else if (MediaLinks[link] === undefined) {
-            let isMedia = await IsImage(isDevelopment ? link : `/proxy/?url=${link}`);
+            let isMedia = await IsImage(link);
             if (isMedia) {
               message.message = message.message.replace(link, '');
             } else {
@@ -66,7 +66,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
           )}
         </Linkify>
         {links.map((link, index) => (
-          <img key={index} width={400} height={400} src={isDevelopment ? link : `/proxy/?url=${link}`} alt="Attachment"/>
+          <img key={index} width={400} height={400} src={link} alt="Attachment"/>
         ))}
       </div>
     </div>

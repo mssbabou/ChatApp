@@ -75,7 +75,6 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
     }
   };
 
-
   const removeAttachment = (index) => {
     setAttachments(attachments.filter((_, i) => i !== index));
     setAttachmentLinks(attachmentLinks.filter((_, i) => i !== index));
@@ -89,13 +88,13 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
     <div className="p-2">
       <div className="flex flex-row overflow-x-auto gap-2 mb-2">
         {attachments.map((attachment, index) => (
-          <div key={index} className="relative border-4 rounded-lg border-black" style={{ width: 100, height: 100 }}>
+          <div key={index} className="relative border-4 rounded-lg border-gray-600" style={{ width: 100, height: 100 }}>
           {attachment.type.startsWith('image/') ? (
-            <img src={URL.createObjectURL(attachment)} alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={URL.createObjectURL(attachment)} className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <img src="https://static.thenounproject.com/png/1077671-200.png" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="https://markuschatappstorage.blob.core.windows.net/chatstorage/6a81b346-84ab-4ad6-b271-e954289e0787_1077671-200.png" className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
-          <IconButton className="absolute top-0 right-0 rounded-none bg-red-500 text-white p-1 w-6 h-6" onClick={() => removeAttachment(index)}>
+          <IconButton className="absolute top-0 right-0 rounded-sm bg-red-500 text-white p-1 w-6 h-6" onClick={() => removeAttachment(index)}>
             <Close />
           </IconButton>
         </div>
