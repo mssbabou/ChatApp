@@ -185,6 +185,30 @@ const useChat = (initialChatId, isDevelopment) => {
     }
   };
 
+  const fetchUploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${BackEndEndpoint}/api/UploadFile`, {
+        method: "POST",
+        headers: {
+          "X-Api-Key": userRef.current.privateUserId,
+        },
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (!data || !data.status) return null;
+
+      return data.data;
+    }
+    catch (error) {
+      console.error("Failed to upload file to the backend:", error);
+      return null;
+    }
+  }
+
   const appendOldMessages = (data) => {
     const newMessages = data.map((message) => ({
       id: message.id,
@@ -210,6 +234,7 @@ const useChat = (initialChatId, isDevelopment) => {
     hasMore,
     sendMessage,
     fetchMessagesBehind,
+    fetchUploadFile,
     setAnimateMessage,
     animateMessage,
     scrollToBottom,

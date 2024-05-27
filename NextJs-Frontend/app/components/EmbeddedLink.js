@@ -32,6 +32,8 @@ export async function IsImage(link){
 
         const response = await fetch(link);
 
+        if (!response.ok) return false;
+
         const contentType = response.headers.get('content-type');
         console.log(`${link}: ${contentType}`);
 

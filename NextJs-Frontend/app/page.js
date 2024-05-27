@@ -27,6 +27,7 @@ const ChatComponent = () => {
     hasMore,
     sendMessage,
     fetchMessagesBehind,
+    fetchUploadFile,
     animateMessage,
     scrollToBottom,
     initialized,
@@ -107,6 +108,7 @@ const ChatComponent = () => {
         <div className="flex flex-col" style={{ maxWidth: 900, width: "100%" }}>
           <ChatInput
             sendMessage={sendMessage}
+            uploadFile={fetchUploadFile}
             reciever={initialChatId ? initialChatId : ""}
           />
         </div>
