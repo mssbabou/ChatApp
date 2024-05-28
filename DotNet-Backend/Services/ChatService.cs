@@ -6,13 +6,13 @@ public class ChatService
     private readonly NotificationService notificationService;
     private readonly IApiKeyService apiKeyService;
     private readonly NameGenerator nameGenerator;
-    private readonly FileStorageService fileStorage;
+    private readonly IFileStorageService fileStorage;
 
     public ChatService(ChatDatabaseService chatDatabaseService, 
                       NotificationService notificationService,
                       IApiKeyService apiKeyService, 
                       NameGenerator nameGenerator,
-                      FileStorageService fileStorage)
+                      IFileStorageService fileStorage)
     {
         this.chatDatabaseService = chatDatabaseService;
         this.notificationService = notificationService;
@@ -43,7 +43,8 @@ public class ChatService
     {
         var user = await chatDatabaseService.GetPrivateUserAsync(userId);
         var dbMessage = await chatDatabaseService.AddMessageAsync(new ChatMessage(new PublicUserDTO(user), chatId ?? "", message));
-        await notificationService.NotifyClients(chatId, dbMessage.Id);
+        //await notificationService.NotifyNewMessage(chatId, dbMessage.Id);
+        await notificationService.RecieveMessage(chatId, dbMessage);
         return new ChatMessageDTO(dbMessage);
     }
 

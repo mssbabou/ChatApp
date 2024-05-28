@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 
-public class AzureFileStorage : FileStorageService
+public class AzureFileStorage : BaseFileStorageService
 {
     public readonly string connectionString = string.Empty;
     public readonly string containerName = string.Empty;

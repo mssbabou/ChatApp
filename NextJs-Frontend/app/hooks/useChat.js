@@ -47,7 +47,10 @@ const useChat = (initialChatId, isDevelopment) => {
       await connectionRef.current.start();
 
       connectionRef.current.invoke("JoinGroup", initialChatId).then(() => {
-          console.log("Connected to chat:", initialChatId);
+          connectionRef.current.on("RecieveMessage", (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+          });
+          /* OLD SLOW WAY
           connectionRef.current.on("NotifyMessage", async (id) => {
             try {
               console.log("Received message notification:", id);
@@ -56,6 +59,7 @@ const useChat = (initialChatId, isDevelopment) => {
               console.error("Error receiving message:", err);
             }
           });
+          */
         });
     } catch (err) {
       console.error("Error starting connection:", err);

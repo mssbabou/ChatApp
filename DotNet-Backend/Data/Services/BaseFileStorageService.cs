@@ -1,4 +1,4 @@
-public abstract class FileStorageService : IFileStorageService
+public abstract class BaseFileStorageService : IFileStorageService
 {
     public abstract Task<string> SaveFileAsync(IFormFile file);
 

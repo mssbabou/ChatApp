@@ -1,4 +1,4 @@
-public class LocalFileStorage : FileStorageService
+public class LocalFileStorage : BaseFileStorageService
 {
     private readonly string storagePath = string.Empty;
 

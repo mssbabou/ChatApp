@@ -21,7 +21,11 @@ public class ChatDatabaseService
         chatMessagesCollection = dbContext.GetCollection<ChatMessage>(ChatMessagesCollectionName);
         userCollection = dbContext.GetCollection<User>(UsersCollectionName);
 
-        chatMessagesCollection.Indexes.CreateOne(new CreateIndexModel<ChatMessage>(Builders<ChatMessage>.IndexKeys.Descending(m => m.TimeStamp)));
+        chatMessagesCollection.Indexes.CreateMany(
+        [
+            new CreateIndexModel<ChatMessage>(Builders<ChatMessage>.IndexKeys.Ascending(m => m.ChatId)),
+            new CreateIndexModel<ChatMessage>(Builders<ChatMessage>.IndexKeys.Descending(m => m.TimeStamp))
+        ]);
         
         userCollection.Indexes.CreateMany(
         [
