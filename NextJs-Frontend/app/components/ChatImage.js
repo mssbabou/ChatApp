@@ -1,35 +1,32 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const ChatImage = (url) => {
-    const imgRef = useRef(null);
+const ChatImage = ({ src, alt, ...props }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    const handleContextMenu = (e) => {
-        e.preventDefault();
+  const handleLoad = () => {
+    setLoading(false);
+  };
 
-        // Create a temporary input to hold the URL
-        const tempInput = document.createElement('input');
-        tempInput.value = url;
-        document.body.appendChild(tempInput);
+  const handleError = () => {
+    setLoading(false);
+    setError(true);
+  };
 
-        // Select the input value and copy it to clipboard
-        tempInput.select();
-        document.execCommand('copy');
-
-        // Remove the temporary input
-        document.body.removeChild(tempInput);
-
-        alert('Image URL copied to clipboard!');
-    };
-
-    return (
-        <img
-            ref={imgRef}
-            src={`${url}`}
-            alt="Example"
-            onContextMenu={handleContextMenu}
-            style={{ cursor: 'context-menu' }}
-        />
-    );
+  return (
+    <div className={`relative flex items-center justify-center w-full h-full ${loading ? 'bg-gray-300' : ''} ${error ? 'bg-red-500' : ''}`}>
+      {loading && !error && <CircularProgress className="absolute" />}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`${loading || error ? 'hidden' : 'block'}`}
+        {...props}
+      />
+    </div>
+  );
 };
 
 export default ChatImage;

@@ -3,6 +3,8 @@ import ConvertTimestamp from '../utils/ConvertTimestamp';
 import Linkify from 'react-linkify';
 import EmbeddedLink, { IsImage } from './EmbeddedLink';
 import Image from 'next/image';
+import ImageWithPlaceholder from './ImageWithPlaceholder';
+import ChatImage from './ChatImage';
 
 let MediaLinks = {};
 

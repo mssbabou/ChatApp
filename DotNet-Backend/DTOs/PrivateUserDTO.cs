@@ -1,7 +1,7 @@
 public class PrivateUserDTO(User user)
 {
-    public string PublicUserId { get; private set; } = user.PublicUserId;
-    public string PrivateUserId { get; private set; } = user.PrivateUserId;
-    public string Username { get; private set; } = user.Username;
-    public DateTime CreatedAt { get; private set; } = user.CreatedAt;
+    public string PublicUserId { get; } = user.PublicUserId;
+    public string PrivateUserId { get; } = user.PrivateUserId;
+    public string Username { get; } = user.Username;
+    public DateTime CreatedAt { get; } = user.CreatedAt;
 }
