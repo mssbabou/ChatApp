@@ -152,13 +152,13 @@ const useChat = (initialChatId, isDevelopment) => {
 
       if (!data || !data.status) throw new Error("Failed to fetch messages from the backend.");
 
-      setMessageOffset((prevOffset) => prevOffset + data.data.length);
-      appendOldMessages(data.data);
-
       if (data.data.length === 0) {
         setHasMore(false);
         return;
       }
+
+      setMessageOffset((prevOffset) => prevOffset + data.data.length);
+      appendOldMessages(data.data);
 
       setOldestMessage(data.data[0].id);
     } catch (error) {
@@ -175,13 +175,13 @@ const useChat = (initialChatId, isDevelopment) => {
 
       if (!data || !data.status) throw new Error("Failed to fetch messages from the backend.");
 
-      setMessageOffset((prevOffset) => prevOffset + data.data.length);
-      appendOldMessages(data.data);
-
       if (data.data.length === 0) {
         setHasMore(false);
         return;
       }
+
+      setMessageOffset((prevOffset) => prevOffset + data.data.length);
+      appendOldMessages(data.data);
 
       setOldestMessage(data.data[0].id);
     } catch (error) {

@@ -29,6 +29,7 @@
     "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "^6.23.1",
     "react-social-media-embed": "^2.5.13",
+    "resize-observer-polyfill": "^1.5.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

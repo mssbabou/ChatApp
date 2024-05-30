@@ -92,7 +92,7 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
           {attachment.type.startsWith('image/') ? (
             <img src={URL.createObjectURL(attachment)} className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <img src="https://markuschatappstorage.blob.core.windows.net/chatstorage/6a81b346-84ab-4ad6-b271-e954289e0787_1077671-200.png" className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="/UnknownFile.png" className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           <IconButton className="absolute top-0 right-0 rounded-sm bg-red-500 text-white p-1 w-6 h-6" onClick={() => removeAttachment(index)}>
             <Close />
