@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { ArrowUpward, AttachFile, Close } from "@mui/icons-material";
 
-export default function ChatInput({ sendMessage, uploadFile, reciever }) {
+export default function ChatInput({ sendMessage, uploadFile, receiver }) {
   const [messageField, setMessageField] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [attachmentLinks, setAttachmentLinks] = useState([]);
@@ -84,6 +86,15 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
     setCanSend(messageField !== "" || attachments.length > 0);
   }, [messageField, attachments]);
 
+  const [isSendHovered, setIsSendHovered] = useState(false);
+  const sendButtonStyle = {
+    borderRadius: '0.375rem', // rounded-md
+    padding: '0.25rem', // p-1
+    transition: 'background-color 0.3s ease', // smooth transition for hover
+    backgroundColor: canSend ? (isSendHovered ? '#1d4ed8' : '#3b82f6') : '#d1d5db',
+    cursor: canSend ? 'pointer' : 'default',
+  };
+
   return (
     <div className="p-2">
       <div className="flex flex-row overflow-x-auto gap-2 mb-2">
@@ -102,7 +113,7 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
       </div>
       <TextField
         className="mb-2"
-        placeholder={`Message ${reciever}`}
+        placeholder={`Message ${receiver}`}
         variant="outlined"
         fullWidth
         multiline
@@ -126,8 +137,10 @@ export default function ChatInput({ sendMessage, uploadFile, reciever }) {
               <IconButton 
                 onClick={handleSendMessage}
                 disableTouchRipple={!canSend}  
-                className={`rounded-md p-1 ${canSend ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-300"}`}>
-    
+                onMouseEnter={() => setIsSendHovered(true)}
+                onMouseLeave={() => setIsSendHovered(false)}
+                style={sendButtonStyle}
+                >
                 <ArrowUpward className="text-white" />
               </IconButton>
             </InputAdornment>
