@@ -15,6 +15,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
+# Add the build arguments
+ARG AZURE_STORAGE_CONNECTION_STRING
+ARG AZURE_STORAGE_CONTAINER_NAME
+
+# Use the arguments in your build
+ENV AZURE_STORAGE_CONNECTION_STRING=$AZURE_STORAGE_CONNECTION_STRING
+ENV AZURE_STORAGE_CONTAINER_NAME=$AZURE_STORAGE_CONTAINER_NAME
+
 # Set the environment variable
 ENV FILESTORAGE_PATH=/../attachments
 ENV MONGODB_CONNECTION_STRING=mongodb://ChatAppMongoDB:27017
