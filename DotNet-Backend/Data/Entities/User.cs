@@ -5,7 +5,7 @@ public class User(string username)
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public ObjectId? Id { get; private set; }
+    public string? Id { get; private set; }
 
     public string PublicUserId { get; private set; } = Guid.NewGuid().ToString();
     public string PrivateUserId { get; private set; } = Guid.NewGuid().ToString();

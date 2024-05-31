@@ -15,9 +15,6 @@ public class AzureFileStorage : BaseFileStorageService
 
         var blobServiceClient = new BlobServiceClient(connectionString);
         blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-        Console.WriteLine($"Connection String: {connectionString}");
-        Console.WriteLine($"Container Name: {containerName}");
     }
 
     public override async Task<string> SaveFileAsync(IFormFile file)

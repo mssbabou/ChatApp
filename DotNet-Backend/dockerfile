@@ -25,7 +25,7 @@ ENV AZURE_STORAGE_CONTAINER_NAME=$AZURE_STORAGE_CONTAINER_NAME
 
 # Set the environment variable
 ENV FILESTORAGE_PATH=/../attachments
-ENV MONGODB_CONNECTION_STRING=mongodb+srv://markus:12345@cluster0.m3i5ipc.mongodb.net/
+ENV MONGODB_CONNECTION_STRING=mongodb://ChatAppMongoDB:27017
 
 EXPOSE 5001
 ENTRYPOINT ["dotnet", "ChatApp.dll"]
