@@ -25,33 +25,44 @@ export default function EmbeddedLink({ link }) {
     );
 }
 
-export async function IsImage(link){
-    let isMedia = false;
+export async function GetMediaType(link) {
+    let mediaType = null;
     try {
-        if (link.includes('youtube')) return false;
-
-        const response = await fetch(link);
-
-        if (!response.ok) return false;
-
-        const contentType = response.headers.get('content-type');
-        console.log(`${link}: ${contentType}`);
-
-        if (contentType && contentType.startsWith('image')) {
-            isMedia = true;
+      if (link.includes('youtube')) return null;
+  
+      const response = await fetch(link);
+  
+      if (!response.ok) return null;
+  
+      const contentType = response.headers.get('content-type');
+      console.log(`${link}: ${contentType}`);
+  
+      if (contentType) {
+        if (contentType.startsWith('image')) {
+          mediaType = 'image';
+        } else if (contentType.startsWith('video')) {
+          mediaType = 'video';
+        } else if (contentType.startsWith('audio')) {
+          mediaType = 'audio';
         } else {
-            // Additional check by trying to load the image
-            const blob = await response.blob();
-            isMedia = await new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = URL.createObjectURL(blob);
-            });
+          // Additional check by trying to load the image
+          const blob = await response.blob();
+          const isImage = await new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = URL.createObjectURL(blob);
+          });
+  
+          if (isImage) {
+            mediaType = 'image';
+          }
         }
+      }
     } catch (error) {
-        isMedia = false;
+      mediaType = null;
     }
-
-    return isMedia;
-}
+  
+    return mediaType;
+  }
+  

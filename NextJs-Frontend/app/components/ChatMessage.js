@@ -1,10 +1,7 @@
 import React from 'react';
 import ConvertTimestamp from '../utils/ConvertTimestamp';
 import Linkify from 'react-linkify';
-import EmbeddedLink, { IsImage } from './EmbeddedLink';
-import Image from 'next/image';
-import ImageWithPlaceholder from './ImageWithPlaceholder';
-import ChatImage from './ChatImage';
+import EmbeddedLink, { GetMediaType } from './EmbeddedLink';
 
 let MediaLinks = {};
 
@@ -16,21 +13,24 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
   React.useEffect(() => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-    if(!message.message) return;
+    if (!message.message) return;
     let matches = message.message.match(urlRegex);
     if (matches) {
       (async () => {
         for (const link of matches) {
-          if (MediaLinks[link] === true) {
-            message.message = message.message.replace(link, '');
-          } else if (MediaLinks[link] === undefined) {
-            let isMedia = await IsImage(link);
-            if (isMedia) {
+          if (MediaLinks[link]) {
+            if (MediaLinks[link] !== 'unsupported') {
               message.message = message.message.replace(link, '');
+            }
+          } else if (MediaLinks[link] === undefined) {
+            let mediaType = await GetMediaType(link);
+            if (mediaType) {
+              message.message = message.message.replace(link, '');
+              MediaLinks[link] = mediaType;
             } else {
               matches = matches.filter((item) => item !== link);
+              MediaLinks[link] = 'unsupported';
             }
-            MediaLinks[link] = isMedia;
           }
         }
         setLinks([...new Set(matches)]);
@@ -39,11 +39,11 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
   }, [message.message]);
 
   const linkifyComponentDecorator = (decoratedHref, decoratedText, key) => (
-    <a target='blank' href={decoratedHref} key={key} style={{ color: 'blue', textDecoration: 'underline'}}>
+    <a target='blank' href={decoratedHref} key={key} style={{ color: 'blue', textDecoration: 'underline' }}>
       {decoratedText}
     </a>
   );
-  
+
   return (
     <div className={`flex ${isAuthor ? "justify-end" : "justify-start"}`}>
       <div ref={ref} className={`${isAuthor ? "bg-gray-300" : "bg-gray-100"} m-2 p-3 rounded-lg shadow`} style={{ minHeight: 75, width: '100%' }}>
@@ -67,9 +67,28 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
             </p>
           )}
         </Linkify>
-        {links.map((link, index) => (
-          <img key={index} width={400} height={400} src={link} alt="Attachment"/>
-        ))}
+        {links.map((link, index) => {
+          const mediaType = MediaLinks[link];
+          if (mediaType === 'image') {
+            return <img key={index} width={400} height={400} src={link} alt="Attachment" />;
+          } else if (mediaType === 'video') {
+            return (
+              <video key={index} width={400} height={400} controls>
+                <source src={link} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            );
+          } else if (mediaType === 'audio') {
+            return (
+              <audio key={index} controls>
+                <source src={link} type="audio/mpeg" />
+                Your browser does not support the audio tag.
+              </audio>
+            );
+          } else {
+            return null;
+          }
+        })}
       </div>
     </div>
   );
