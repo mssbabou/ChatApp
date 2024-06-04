@@ -3,13 +3,16 @@ import * as signalR from "@microsoft/signalr";
 
 const useChat = (initialChatId, isDevelopment) => {
   const [chatId, setChatId] = useState(initialChatId);
+
   const [oldestMessage, setOldestMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageCount, setMessageCount] = useState(0);
-  const [animateMessage, setAnimateMessage] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
   const [messageOffset, setMessageOffset] = useState(0);
 
+  const [rankedChatids, setRankedChatids] = useState([]);
+
+  const [animateMessage, setAnimateMessage] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
   const initialized = useRef(false);
   const userRef = useRef(null);
   const connectionRef = useRef(null);
@@ -33,9 +36,21 @@ const useChat = (initialChatId, isDevelopment) => {
   };
 
   const initializeChat = async () => {
+    console.log("Initializing chat...");
     await requestUser();
     await fetchOldMessages(20);
     await setupChatHubConnection(userRef.current.privateUserId);
+
+    await fetchRankedChatids();
+  };
+
+  const fetchRankedChatids = async () => {
+    const response = await fetch(`${BackEndEndpoint}/api/GetRankedChatIds`);
+    const data = await response.json();
+
+    if (!data || !data.status) return;
+
+    setRankedChatids(data.data);
   };
 
   const setupChatHubConnection = async (apiKey) => {
@@ -239,6 +254,7 @@ const useChat = (initialChatId, isDevelopment) => {
     sendMessage,
     fetchMessagesBehind,
     fetchUploadFile,
+    rankedChatids,
     setAnimateMessage,
     animateMessage,
     scrollToBottom,

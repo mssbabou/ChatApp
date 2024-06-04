@@ -27,6 +27,7 @@ const ChatComponent = () => {
     sendMessage,
     fetchMessagesBehind,
     fetchUploadFile,
+    rankedChatids,
     animateMessage,
     scrollToBottom,
     initialized,
@@ -98,8 +99,15 @@ const ChatComponent = () => {
         </h2>
       </div>
       <div className="flex flex-grow overflow-hidden">
-        <div className="flex flex-col items-center justify-between h-full bg-gray-500" style={{ width: 0 }}>
-          {/* Placeholder for future use */}
+        <div className="flex flex-col items-center justify-between h-full" style={{ width: 300 }}>
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="text-2xl">Top Chats</h1>
+            {rankedChatids.map((rankedChatid, index) => (  
+              <div key={index} className="flex items-center justify-between w-full p-2 cursor-pointer" onClick={() => setChatId(rankedChatid.chatId)}>
+                <h2 className="text-lg">{`${rankedChatid.chatId} - ${rankedChatid.usageCount}`}</h2>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="flex flex-col flex-grow h-full items-center justify-center">
           <div id="scrollableDiv" className="flex flex-col-reverse overflow-auto my-2" style={{ maxWidth: 900, width: "100%", height: "100%" }} ref={scrollableDivRef}>

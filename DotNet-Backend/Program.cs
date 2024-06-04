@@ -30,6 +30,7 @@ builder.Services.AddScoped<ChatDatabaseService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
+builder.Services.AddSingleton<ChatIdUsageMetricService>();
 #endregion
 
 #region Authentication

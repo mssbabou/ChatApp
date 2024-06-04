@@ -80,6 +80,20 @@ public class ChatController : Controller
         }
     }
 
+    [HttpGet("GetRankedChatIds")]
+    public async Task<IActionResult> GetRankedChatIds(int count = 5)
+    {
+        try
+        {
+            var chatIds = await chatService.GetRankedChatIdsAsync(count);
+            return Ok(new ChatRestApiResponse<ChatIdUsageMetric[]> { Data = chatIds });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ChatRestApiResponse<string> { Status = false, StatusMessage = ex.Message });
+        }
+    }
+
     [HttpPost("UploadFile")]
     public async Task<IActionResult> UploadFile(IFormFile file)
     {
