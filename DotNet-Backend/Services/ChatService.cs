@@ -58,9 +58,9 @@ public class ChatService
         return new ChatMessageDTO(dbMessage);
     }
 
-    public async Task<ChatIdUsageMetric[]> GetRankedChatIdsAsync(int count)
+    public ChatIdUsageMetric[] GetRankedChatIdsAsync(int count)
     {
-        return chatIdUsageMetricService.GetRankedChatIds(count);
+        return chatIdUsageMetricService.GetRankedChatIds(count).Where(chatId => !string.IsNullOrEmpty(chatId.ChatId)).ToArray();
     }
 
     public async Task<string> UploadFileAsync(IFormFile file)

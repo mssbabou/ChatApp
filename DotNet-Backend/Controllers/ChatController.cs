@@ -85,7 +85,7 @@ public class ChatController : Controller
     {
         try
         {
-            var chatIds = await chatService.GetRankedChatIdsAsync(count);
+            var chatIds = chatService.GetRankedChatIdsAsync(count);
             return Ok(new ChatRestApiResponse<ChatIdUsageMetric[]> { Data = chatIds });
         }
         catch (Exception ex)
