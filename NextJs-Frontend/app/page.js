@@ -63,7 +63,7 @@ const ChatComponent = () => {
   return (
     <main className="flex flex-col h-screen">
       <div className="bg-gray-300 flex justify-between">
-        <div className="flex items-center m-3">
+        <div className="flex items-center m-3 shadow">
           <IconButton onClick={() => setBurgerMenuOpen(!burgerMenuOpen)} style={{ width: 40, height: 40, background: 'white', borderRadius: '4px' }}>
             {burgerMenuOpen ? <CloseIcon className="text-black"/> : <MenuIcon className="text-black"/>} 
           </IconButton>
@@ -110,13 +110,14 @@ const ChatComponent = () => {
       </div>
       <div className="flex flex-grow overflow-hidden">
       {burgerMenuOpen &&
-      <div className="m-2 h-full" style={{ width: 300 }}>
-        <div className="flex flex-col items-center justify-center">
+      <div className="h-full bg-gray-400" style={{ width: 300 }}>
+        <div className="flex flex-col justify-center m-2">
           <h1 className="text-2xl">Top Chats🔥</h1>
+          <Divider style={{ margin: '8px' }}/>
           {rankedChatids.map((rankedChatid, index) => (
             <div
               key={index}
-              className="flex items-center justify-center w-full p-2 cursor-pointer"
+              className="flex items-center w-full p-2 my-1 rounded bg-white cursor-pointer shadow"
               onClick={() => setChatId(rankedChatid.chatId)}
             >
               <h2 className="text-lg">{`${rankedChatid.chatId}`}</h2>
