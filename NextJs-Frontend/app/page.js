@@ -61,7 +61,7 @@ const ChatComponent = () => {
   }
 
   return (
-    <main className="flex flex-col h-screen">
+    <main className="flex bg-gray-100 flex-col h-screen">
       <div className="bg-gray-300 flex justify-between">
         <div className="flex items-center m-3 shadow">
           <IconButton onClick={() => setBurgerMenuOpen(!burgerMenuOpen)} style={{ width: 40, height: 40, background: 'white', borderRadius: '4px' }}>
@@ -110,17 +110,17 @@ const ChatComponent = () => {
       </div>
       <div className="flex flex-grow overflow-hidden">
       {burgerMenuOpen &&
-      <div className="h-full bg-gray-400" style={{ width: 300 }}>
+      <div className="h-full bg-gray-600" style={{ width: 300 }}>
         <div className="flex flex-col justify-center m-2">
-          <h1 className="text-2xl">Top Chats🔥</h1>
-          <Divider style={{ margin: '8px' }}/>
+          <h1 className="text-3xl text-white">Top Chats🔥</h1>
+          <Divider style={{ margin: '8px 0px 8px 0px', background: 'lightgray' }}/>
           {rankedChatids.map((rankedChatid, index) => (
             <div
               key={index}
-              className="flex items-center w-full p-2 my-1 rounded bg-white cursor-pointer shadow"
+              className="flex items-center w-full p-2 my-1 rounded bg-gray-500 hover:bg-gray-400 cursor-pointer shadow"
               onClick={() => setChatId(rankedChatid.chatId)}
             >
-              <h2 className="text-lg">{`${rankedChatid.chatId}`}</h2>
+              <h2 className="text-lg text-white">{`${rankedChatid.chatId}`}</h2>
             </div>
           ))}
         </div>
