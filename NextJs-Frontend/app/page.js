@@ -63,8 +63,8 @@ const ChatComponent = () => {
   return (
     <main className="flex flex-col h-screen">
       <div className="bg-gray-300 flex justify-between">
-        <div className="flex items-center">
-          <IconButton className="m-3" onClick={() => setBurgerMenuOpen(!burgerMenuOpen)} style={{ width: 40, height: 40, background: 'white', borderRadius: '4px' }}>
+        <div className="flex items-center m-3">
+          <IconButton onClick={() => setBurgerMenuOpen(!burgerMenuOpen)} style={{ width: 40, height: 40, background: 'white', borderRadius: '4px' }}>
             {burgerMenuOpen ? <CloseIcon className="text-black"/> : <MenuIcon className="text-black"/>} 
           </IconButton>
         </div>

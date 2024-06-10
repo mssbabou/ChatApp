@@ -105,7 +105,20 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
           ) : (
             <img src="/UnknownFile.png" className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
-          <IconButton className="absolute top-0 right-0 rounded-sm bg-red-500 text-white p-1 w-6 h-6" onClick={() => removeAttachment(index)}>
+          <IconButton
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              borderRadius: '0.125rem', // 2px for rounded-sm
+              backgroundColor: '#f56565', // bg-red-500
+              color: '#ffffff', // text-white
+              padding: '0.25rem', // 1rem is 16px, so 0.25rem is 4px for p-1
+              width: '1.5rem', // 6 * 0.25rem (1rem is 16px, so 1.5rem is 24px for w-6)
+              height: '1.5rem', // 6 * 0.25rem (1rem is 16px, so 1.5rem is 24px for h-6)
+            }}
+            onClick={() => removeAttachment(index)}
+          >
             <Close />
           </IconButton>
         </div>
