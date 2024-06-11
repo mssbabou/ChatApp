@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -67,11 +68,15 @@ public class ChatController : Controller
     {
         try
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             string userId = chatService.GetApiKey(HttpContext);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             var dbMessage = await chatService.AddMessageAsync(userId, chatId, message);
 
+            sw.Stop();
+            Console.WriteLine($"Messaged Added in {sw.ElapsedMilliseconds}ms");
             return Ok(new ChatRestApiResponse<ChatMessageDTO> { Data = dbMessage });
         }
         catch (Exception ex)

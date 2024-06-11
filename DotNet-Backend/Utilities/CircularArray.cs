@@ -1,15 +1,8 @@
-public class CircularArray<T>
+public class CircularArray<T>(int capacity)
 {
-    private T[] array;
-    private int start;
-    private int end;
-
-    public CircularArray(int capacity)
-    {
-        array = new T[capacity];
-        start = 0;
-        end = 0;
-    }
+    private readonly T[] array = new T[capacity];
+    private int start = 0;
+    private int end = 0;
 
     public T? Enqueue(T item)
     {

@@ -9,6 +9,8 @@ services:
       - chat-app-network
 
   ChatAppDotNetBackend:
+    depends_on:
+      - ChatAppMongoDB
     image: ghcr.io/mssbabou/chatapp/dotnet-backend:latest
     volumes:
       - chatapp_filestorage:/attachments
@@ -17,8 +19,18 @@ services:
     networks:
       - chat-app-network
 
+  ChatAppMongoDB:
+    image: mongo
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - chat-app-network
+
 volumes:
   chatapp_filestorage:
+  mongodb_data:
   
 networks:
   chat-app-network: {}

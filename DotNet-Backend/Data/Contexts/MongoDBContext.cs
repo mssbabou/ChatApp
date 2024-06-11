@@ -10,6 +10,7 @@ public class MongoDBContext
     public MongoDBContext(IConfiguration configuration)
     {
         var connectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING") ?? configuration.GetValue<string>("MongoDB:ConnectionString");
+        Console.WriteLine(connectionString);
         var databaseName = configuration.GetValue<string>("MongoDB:DatabaseName");
         var client = new MongoClient(connectionString);
         Database = client.GetDatabase(databaseName);
