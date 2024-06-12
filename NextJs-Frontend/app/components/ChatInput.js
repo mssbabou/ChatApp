@@ -9,6 +9,8 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
   const [attachments, setAttachments] = useState([]);
   const [attachmentLinks, setAttachmentLinks] = useState([]);
   const [canSend, setCanSend] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -37,8 +39,8 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
         if (attachments.length > 0) {
           newMessage = `${newMessage}\n${attachmentLinks.join("\n")}`;
         }
-        const sucess = await sendMessage(newMessage);
-        if (sucess) {
+        const success = await sendMessage(newMessage);
+        if (success) {
           setMessageField("");
           setAttachments([]);
           setAttachmentLinks([]);
@@ -96,36 +98,39 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
   };
 
   return (
-    <div className="p-2">
-      <div className="flex flex-row overflow-x-auto gap-2 mb-2">
+    <div
+      className={`mx-2 mb-2 rounded-3xl border-2 ${isHovered ? 'border-gray-800' : 'border-gray-500'} ${isPressed ? 'border-blue-600' : ''}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+    >
+      <div className="flex flex-row overflow-x-auto">
         {attachments.map((attachment, index) => (
-          <div key={index} className="relative border-4 rounded-lg border-gray-600" style={{ width: 100, height: 100 }}>
-          {attachment.type.startsWith('image/') ? (
-            <img src={URL.createObjectURL(attachment)} className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <img src="/UnknownFile.png" className="rounded-sm" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          )}
-          <IconButton
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              borderRadius: '0.125rem', // 2px for rounded-sm
-              backgroundColor: '#f56565', // bg-red-500
-              color: '#ffffff', // text-white
-              padding: '0.25rem', // 1rem is 16px, so 0.25rem is 4px for p-1
-              width: '1.5rem', // 6 * 0.25rem (1rem is 16px, so 1.5rem is 24px for w-6)
-              height: '1.5rem', // 6 * 0.25rem (1rem is 16px, so 1.5rem is 24px for h-6)
-            }}
-            onClick={() => removeAttachment(index)}
-          >
-            <Close />
-          </IconButton>
-        </div>
+          <div key={index} className="relative ml-2 my-2" style={{ width: 100, height: 100 }}>
+            {attachment.type.startsWith('image/') ? (
+              <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-600 rounded-xl" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <img src="/UnknownFile.png" className="border-2 border-gray-600 rounded-xl" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            )}
+            <IconButton
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                borderRadius: '0.75rem', // 2px for rounded-sm
+                backgroundColor: '#f56565', // bg-red-500
+                color: '#ffffff', // text-white
+                padding: '0.25rem', // 1rem is 16px, so 0.25rem is 4px for p-1
+              }}
+              onClick={() => removeAttachment(index)}
+            >
+              <Close />
+            </IconButton>
+          </div>
         ))}
       </div>
       <TextField
-        className="mb-2"
         placeholder={`Message ${receiver}`}
         variant="outlined"
         fullWidth
@@ -147,18 +152,19 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton 
+              <IconButton
                 onClick={handleSendMessage}
-                disableTouchRipple={!canSend}  
+                disableTouchRipple={!canSend}
                 onMouseEnter={() => setIsSendHovered(true)}
                 onMouseLeave={() => setIsSendHovered(false)}
                 style={sendButtonStyle}
-                >
+              >
                 <ArrowUpward className="text-white" />
               </IconButton>
             </InputAdornment>
           ),
         }}
+        style={{ }}
         sx={{
           "& fieldset": {
             border: 2,
@@ -169,7 +175,7 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
             borderBottomRightRadius: 20,
           },
         }}
-    />
+      />
     </div>
   );
 }

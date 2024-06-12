@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Diagnostics;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 public class ChatDatabaseService
@@ -16,6 +17,8 @@ public class ChatDatabaseService
     #region Constructor
     public ChatDatabaseService(MongoDBContext dbContext)
     {
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
         this.dbContext = dbContext;
 
         chatMessagesCollection = dbContext.GetCollection<ChatMessage>(ChatMessagesCollectionName);
@@ -33,6 +36,8 @@ public class ChatDatabaseService
             new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PublicUserId)),
             new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.PrivateUserId))
         ]);
+        sw.Stop();
+        Console.WriteLine($"ChatDatabaseService initialized in {sw.ElapsedMilliseconds}ms");
     }
     #endregion
 

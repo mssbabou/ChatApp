@@ -46,7 +46,7 @@ const ChatMessage = React.forwardRef(({ isAuthor, message }, ref) => {
 
   return (
     <div className={`flex ${isAuthor ? "justify-end" : "justify-start"}`}>
-      <div ref={ref} className={`${isAuthor ? "bg-gray-300" : "bg-gray-200"} m-2 p-3 rounded-lg shadow`} style={{ minHeight: 75, width: '100%' }}>
+      <div ref={ref} className={`${isAuthor ? "bg-gray-300" : "bg-gray-200"} mx-2 mt-4 p-3 rounded-lg shadow`} style={{ minHeight: 75, width: '100%' }}>
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
             {message.userName}
