@@ -25,8 +25,8 @@ if (builder.Environment.IsDevelopment())
 // Dependency injections for services
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 builder.Services.AddScoped<IFileStorageService, AzureFileStorage>();
-builder.Services.AddScoped<MongoDBContext>();
-builder.Services.AddScoped<ChatDatabaseService>();
+builder.Services.AddSingleton<MongoDBContext>();
+builder.Services.AddSingleton<ChatDatabaseService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<NameGenerator>();
