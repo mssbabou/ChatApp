@@ -128,8 +128,11 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
             <div className="relative" style={{ height: 125 }}>
               {attachment.type.startsWith('image/') ? (
                 <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-500 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) 
+              : attachment.type.startsWith('audio/') ? (
+                <img src="/AudioFile.png" className="border-2 p-6 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <img src="/UnknownFile.png" className="border-2 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/File.png" className="border-2 px-6 py-5 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               )}
             </div>
           </div>
