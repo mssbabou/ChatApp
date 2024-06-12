@@ -107,11 +107,14 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
     >
       <div className="flex flex-row overflow-x-auto">
         {attachments.map((attachment, index) => (
-          <div key={index} className="ml-2 my-2 pl-2 pt-2">
-            <div className="bg-gray-600 p-1 rounded-t-lg flex flex-row justify-end">
+          <div key={index} className="ml-2 my-2 pl-2 pt-2" style={{ minWidth: 150, width: 150 }}>
+            <div className="bg-gray-500 p-2 rounded-t-lg flex flex-row justify-between items-center">
+              <p className="text-gray-100 text-sm whitespace-nowrap overflow-hidden text-ellipsis inline-block">
+                {attachment.name}
+              </p>
               <IconButton
                 style={{
-                  borderRadius: '0.25rem', // 2px for rounded-sm
+                  borderRadius: '0.25rem', // 4px for rounded-sm
                   backgroundColor: '#f56565', // bg-red-500
                   color: '#ffffff', // text-white
                   width: 20,
@@ -122,9 +125,9 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
                 <Close />
               </IconButton>
             </div>
-            <div className="relative" style={{ width: 100, height: 100 }}>
+            <div className="relative" style={{ height: 125 }}>
               {attachment.type.startsWith('image/') ? (
-                <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-500 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <img src="/UnknownFile.png" className="border-2 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               )}
@@ -166,7 +169,7 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
             </InputAdornment>
           ),
         }}
-        style={{ background: "white", }}
+        style={{ background: "#F6F6F6", }}
         sx={{
           "& fieldset": {
             border: 2,
