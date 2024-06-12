@@ -99,7 +99,7 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
 
   return (
     <div
-      className={`mx-2 mb-2 rounded-3xl border-2 ${isHovered ? 'border-gray-800' : 'border-gray-500'} ${isPressed ? 'border-blue-600' : ''}`}
+      className={`mx-2 mb-2 rounded-3xl bg-gray-300 border-none border-2 ${isHovered ? 'border-gray-800' : 'border-gray-500'} ${isPressed ? 'border-blue-600' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseDown={() => setIsPressed(true)}
@@ -107,31 +107,33 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
     >
       <div className="flex flex-row overflow-x-auto">
         {attachments.map((attachment, index) => (
-          <div key={index} className="relative ml-2 my-2" style={{ width: 100, height: 100 }}>
-            {attachment.type.startsWith('image/') ? (
-              <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-600 rounded-xl" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <img src="/UnknownFile.png" className="border-2 border-gray-600 rounded-xl" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            )}
-            <IconButton
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                borderRadius: '0.75rem', // 2px for rounded-sm
-                backgroundColor: '#f56565', // bg-red-500
-                color: '#ffffff', // text-white
-                padding: '0.25rem', // 1rem is 16px, so 0.25rem is 4px for p-1
-              }}
-              onClick={() => removeAttachment(index)}
-            >
-              <Close />
-            </IconButton>
+          <div key={index} className="ml-2 my-2 pl-2 pt-2">
+            <div className="bg-gray-600 p-1 rounded-t-lg flex flex-row justify-end">
+              <IconButton
+                style={{
+                  borderRadius: '0.25rem', // 2px for rounded-sm
+                  backgroundColor: '#f56565', // bg-red-500
+                  color: '#ffffff', // text-white
+                  width: 20,
+                  height: 20,
+                }}
+                onClick={() => removeAttachment(index)}
+              >
+                <Close />
+              </IconButton>
+            </div>
+            <div className="relative" style={{ width: 100, height: 100 }}>
+              {attachment.type.startsWith('image/') ? (
+                <img src={URL.createObjectURL(attachment)} className="border-2 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <img src="/UnknownFile.png" className="border-2 border-gray-600 rounded-b-lg" alt={attachment.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              )}
+            </div>
           </div>
         ))}
       </div>
       <TextField
-        placeholder={`Message ${receiver}`}
+        placeholder={`Message ${receiver ? receiver : ""}`}
         variant="outlined"
         fullWidth
         multiline
@@ -164,13 +166,13 @@ export default function ChatInput({ sendMessage, uploadFile, receiver }) {
             </InputAdornment>
           ),
         }}
-        style={{ }}
+        style={{ background: "white", }}
         sx={{
           "& fieldset": {
             border: 2,
             borderColor: "gray",
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            borderTopLeftRadius: attachments.length === 0 ? 20 : 0,
+            borderTopRightRadius: attachments.length === 0 ? 20 : 0,
             borderBottomLeftRadius: 20,
             borderBottomRightRadius: 20,
           },
